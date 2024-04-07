@@ -73,6 +73,7 @@ def pop_until_open_parenthesis(exp_stack):
 def process_plus_operator(exp_stack):
     # Processa o operador '+'
     expression = pop_until_open_parenthesis(exp_stack)
+    expression_elements = expression.split(',')
 
     S1 = State()
     S2 = State()
@@ -93,12 +94,10 @@ def process_concatenation(exp_stack):
     # Processa a concatenação
     expression = pop_until_open_parenthesis(exp_stack)
 
-    # Cria os estados do NFA para a concatenação
     S1 = State()
     S2 = State()
     S3 = State(is_final=True)
 
-    # Adiciona as transições
     S1.add_transition('a', S2)
     S2.add_transition('b', S3)
 
@@ -106,6 +105,45 @@ def process_concatenation(exp_stack):
     nfa.add_state(S1)
     nfa.add_state(S2)
     nfa.add_state(S3)
+
+    return nfa
+
+def process_union(exp_stack):
+    # Processa a união
+    expression = pop_until_open_parenthesis(exp_stack)
+
+    S1 = State()
+    S2 = State()
+    S3 = State()
+    S4 = State(is_final=True)
+
+    S1.add_transition('ε', S2)
+    S1.add_transition('ε', S3)
+    S2.add_transition('a', S4)
+    S3.add_transition('b', S4)
+
+    nfa = NFA(S1)
+    nfa.add_state(S1)
+    nfa.add_state(S2)
+    nfa.add_state(S3)
+    nfa.add_state(S4)
+
+    return nfa
+
+def process_kleene_closure(exp_stack):
+    # Processa o fecho de Kleene
+    expression = pop_until_open_parenthesis(exp_stack)
+
+    S1 = State()
+    S2 = State(is_final=True)
+
+    S1.add_transition('ε', S1)
+    S1.add_transition('a', S2)
+    S2.add_transition('ε', S1)
+
+    nfa = NFA(S1)
+    nfa.add_state(S1)
+    nfa.add_state(S2)
 
     return nfa
  
@@ -122,8 +160,16 @@ def scan_expression(exp: str):
             nfa = process_plus_operator(exp_stack)    # Fecho Positivo        
             exp_stack.append(f"NFA_{len(nfas)}")
             nfas.append(nfa)
-        if c == '~':
+        elif c == '~':
             nfa = process_concatenation(exp_stack)    # Concatenação
+            exp_stack.append(f"NFA_{len(nfas)}")
+            nfas.append(nfa)
+        elif c == '|':                                # União
+            nfa = process_union(exp_stack)
+            exp_stack.append(f"NFA_{len(nfas)}")
+            nfas.append(nfa)
+        elif c == '*':
+            nfa = process_kleene_closure(exp_stack)
             exp_stack.append(f"NFA_{len(nfas)}")
             nfas.append(nfa)
         else:
