@@ -60,10 +60,9 @@ def pop_until_open_parenthesis(exp_stack):
     while exp_stack:
         char = exp_stack.pop()
         if char == '(':
+            nested -= 1
             if nested == 0:
-                break 
-            else:
-                nested -= 1
+                break
         elif char == ')':
             nested += 1
         expr.append(char)
@@ -89,6 +88,26 @@ def process_plus_operator(exp_stack):
     nfa.add_state(S3)
 
     return nfa
+
+def process_concatenation(exp_stack):
+    # Processa a concatenação
+    expression = pop_until_open_parenthesis(exp_stack)
+
+    # Cria os estados do NFA para a concatenação
+    S1 = State()
+    S2 = State()
+    S3 = State(is_final=True)
+
+    # Adiciona as transições
+    S1.add_transition('a', S2)
+    S2.add_transition('b', S3)
+
+    nfa = NFA(S1)
+    nfa.add_state(S1)
+    nfa.add_state(S2)
+    nfa.add_state(S3)
+
+    return nfa
  
 def scan_expression(exp: str):
     exp_splitted = list(exp)
@@ -100,7 +119,11 @@ def scan_expression(exp: str):
     for i, c in enumerate(exp_splitted):
         print(exp_stack)
         if c == '+':
-            nfa = process_plus_operator(exp_stack)            
+            nfa = process_plus_operator(exp_stack)    # Fecho Positivo        
+            exp_stack.append(f"NFA_{len(nfas)}")
+            nfas.append(nfa)
+        if c == '~':
+            nfa = process_concatenation(exp_stack)    # Concatenação
             exp_stack.append(f"NFA_{len(nfas)}")
             nfas.append(nfa)
         else:
