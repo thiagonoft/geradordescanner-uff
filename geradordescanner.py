@@ -44,44 +44,70 @@ class State:
 class NFA:
     def __init__(self, start_state):
         self.start_state = start_state
+        self.states = [start_state]
+
+    def add_state(self, state):
+        self.states.append(state)
+
+def pop_until_open_parenthesis(exp_stack):
+    """
+    Desempilha caracteres até encontrar o parêntese aberto correspondente,
+    considerando aninhamento de parênteses. Retorna a expressão desempilhada como uma string.
+    """
+    nested = 0  # Para controlar parênteses aninhados
+    expr = []
+    
+    while exp_stack:
+        char = exp_stack.pop()
+        if char == '(':
+            if nested == 0:
+                break 
+            else:
+                nested -= 1
+        elif char == ')':
+            nested += 1
+        expr.append(char)
+            
+    # Retorna a expressão desempilhada e invertida, pois a desempilhamos em ordem reversa
+    return ''.join(reversed(expr))
+
+def process_plus_operator(exp_stack):
+    # Processa o operador '+'
+    expression = pop_until_open_parenthesis(exp_stack)
+
+    S1 = State()
+    S2 = State()
+    S3 = State(is_final=True)
+
+    S1.add_transition('a', S2)
+    S2.add_transition('b', S3)
+    S3.add_transition('ε', S1)
+
+    nfa = NFA(S1)
+    nfa.add_state(S1)
+    nfa.add_state(S2)
+    nfa.add_state(S3)
+
+    return nfa
  
 def scan_expression(exp: str):
     exp_splitted = list(exp)
     exp_stack = []
-    processed_exps = []
- 
-    curr_state = State()
-    next_state = State()
-    nfa = NFA(curr_state)
+    nfas = []
+
     special_chars = "+,)(.*"
  
     for i, c in enumerate(exp_splitted):
+        print(exp_stack)
         if c == '+':
-            back_count = 0
-            while exp_splitted[i - back_count] != '(':
-                exp_stack.append(exp_splitted[i - back_count])
-                back_count += 1
-            exp_stack.append(exp_splitted[i - back_count])
-            print(exp_stack)
- 
-            for stack_member in exp_stack:
-                #
-                if stack_member not in special_chars:
-                    curr_state.add_transition(stack_member, State())
- 
-            # print("curr_state", curr_state)
-            # print("curr_state.transitions", curr_state.transitions)
-            # print("nfa.start_state", nfa.start_state)
-            # print("nfa.start_state.transitions", nfa.start_state.transitions)
-            # print("exp_stack", exp_stack)
- 
-            curr_state = next_state
-            next_state = State()
- 
- 
-            break
+            nfa = process_plus_operator(exp_stack)            
+            exp_stack.append(f"NFA_{len(nfas)}")
+            nfas.append(nfa)
+        else:
+            exp_stack.append(c)
  
     # print(exp_splitted)
+    print(exp_stack)
     return exp
  
 scan_expression("(a,b)+,(a,ε)+")
