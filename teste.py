@@ -1,6 +1,6 @@
 import re
 
-PROGRAM_INPUT = "int x = 10; int y2 = 10;"
+PROGRAM_INPUT = "int x = 10;"
 
 KEYWORDS = [
     "int",
