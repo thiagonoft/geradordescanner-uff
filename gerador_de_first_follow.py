@@ -1,100 +1,25 @@
-GRAMMAR_TABLE = {}
-# TODO: converter first_follow.py pra gramática no formato abaixo
+GRAMMAR_TABLE={}
+
 """
-<Lines>       ::= Integer <Statements> NewLine <Lines> 
-                | Integer <Statements> NewLine
-
-<Statements>  ::= <Statement> ':' <Statements>
-                | <Statement>
-
-<Statement>   ::= CLOSE '#' Integer
-                | DATA <Constant List> 
-                | DIM ID '(' <Integer List> ')'
-                | END          
-                | FOR ID '=' <Expression> TO <Expression>     
-                | FOR ID '=' <Expression> TO <Expression> STEP Integer      
-                | GOTO <Expression> 
-                | GOSUB <Expression> 
-                | IF <Expression> THEN <Statement>         
-                | INPUT <ID List>       
-                | INPUT '#' Integer ',' <ID List>       
-                | LET Id '=' <Expression> 
-                | NEXT <ID List>               
-                | OPEN <Value> FOR <Access> AS '#' Integer
-                | POKE <Value List>
-                | PRINT <Print list>
-                | PRINT '#' Integer ',' <Print List>
-                | READ <ID List>           
-                | RETURN
-                | RESTORE
-                | RUN
-                | STOP
-                | SYS <Value>
-                | WAIT <Value List>
-                | Remark
-
-<Access>   ::= INPUT
-             | OUPUT
-                   
-<ID List>  ::= ID ',' <ID List> 
-             | ID 
-
-<Value List>      ::= <Value> ',' <Value List> 
-                    | <Value> 
-
-<Constant List>   ::= <Constant> ',' <Constant List> 
-                    | <Constant> 
-
-<Integer List>    ::= Integer ',' <Integer List>
-                    | Integer
-                 
-<Expression List> ::= <Expression> ',' <Expression List> 
-                    | <Expression> 
-
-<Print List>      ::= <Expression> ';' <Print List>
-                    | <Expression> 
-                    |  
-
-<Expression>  ::= <And Exp> OR <Expression> 
-                | <And Exp> 
-
-<And Exp>     ::= <Not Exp> AND <And Exp> 
-                | <Not Exp> 
- 
-<Not Exp>     ::= NOT <Compare Exp> 
-                | <Compare Exp> 
-
-<Compare Exp> ::= <Add Exp> '='  <Compare Exp> 
-                | <Add Exp> '<>' <Compare Exp> 
-                | <Add Exp> '><' <Compare Exp> 
-                | <Add Exp> '>'  <Compare Exp> 
-                | <Add Exp> '>=' <Compare Exp> 
-                | <Add Exp> '<'  <Compare Exp> 
-                | <Add Exp> '<=' <Compare Exp> 
-                | <Add Exp> 
-
-<Add Exp>     ::= <Mult Exp> '+' <Add Exp> 
-                | <Mult Exp> '-' <Add Exp> 
-                | <Mult Exp> 
-
-<Mult Exp>    ::= <Negate Exp> '*' <Mult Exp> 
-                | <Negate Exp> '/' <Mult Exp> 
-                | <Negate Exp> 
-
-<Negate Exp>  ::= '-' <Power Exp> 
-                | <Power Exp> 
-
-<Power Exp>   ::= <Value> <Power Exp'> 
-                | <Value>
-
-<Power Exp'>   ::= '^' <Power Exp>
-
-<Value>       ::= '(' <Expression> ')'
-                | ID 
-                | ID '(' <Expression List> ')'
-                | <Constant> 
-
-<Constant> ::= Integer 
-             | String 
-             | Real 
+D->ABCD/ABC
+B->E_EB/E
+E->F_FA/GH/IJ_GK_H/L/MJ_INON/MJ_INONPA/QN/RN/SNTE/UV/U_FA_JV/WJ_IN/XV/YZMab_FA/cd/ef/e_FA_Jf/gV/h/i/j/k/lZ/md/n
+a->U/o
+V->J_JV/J
+d->Z_Jd/Z
+H->p_JH/p
+K->A_JK/A
+q->N_Jq/N
+f->N_Kf/N/@
+N->rsN/r
+r->tur/t
+t->vw/w
+w->x_Iw/x_Lw/x_Mw/x_Nw/x_Ow/x_Pw/x_Qw/x
+x->y_Rx/y_Sx/y
+y->z_Ty/z_Uy/z
+z->_S_A/_A
+_A->Z_B/Z
+_B->_V_A
+Z->_GN_H/J/J_Gq_H/p
+p->A/_C/_D
 """

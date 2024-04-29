@@ -89,7 +89,7 @@ Real           = {digit}+.{digit}+
                 | NEXT <ID List>               
                 | OPEN <Value> FOR <Access> AS '#' Integer
                 | POKE <Value List>
-                | PRINT <Print list>
+                | PRINT <Print List>
                 | PRINT '#' Integer ',' <Print List>
                 | READ <ID List>           
                 | RETURN
