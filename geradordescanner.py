@@ -50,6 +50,10 @@ class NFA:
  
     def add_state(self, state):
         self.states.append(state)
+
+    def merge_nfa(self, other_nfa):
+        for state in other_nfa.states:
+            self.add_state(state)
  
  
 def pop_until_open_parenthesis(exp_stack):
@@ -78,19 +82,22 @@ def process_plus_operator(exp_stack):
     # Processa o operador '+'
     expression = pop_until_open_parenthesis(exp_stack)
     expression_elements = [c for c in expression if c not in SPECIAL_CHARS]
- 
-    S1 = State()
-    S2 = State()
-    S3 = State(is_final=True)
- 
-    S1.add_transition(expression_elements[0], S2)
-    S2.add_transition(expression_elements[1], S3)
-    S3.add_transition('ε', S1)
- 
-    nfa = NFA(S1)
-    nfa.add_state(S1)
-    nfa.add_state(S2)
-    nfa.add_state(S3)
+
+    # Cria o estado inicial do NFA
+    initial_state = State()
+    nfa = NFA(initial_state)
+    current_state = initial_state
+
+    # Cria estados e transições para cada elemento na expressão
+    for i, element in enumerate(expression_elements):
+        next_state = State()
+        current_state.add_transition(element, next_state)
+        nfa.add_state(next_state)
+        current_state = next_state
+
+    # Faz o último estado apontar para o primeiro e marca como final
+    current_state.add_transition('ε', initial_state)
+    current_state.is_final = True
  
     return nfa
  
@@ -143,18 +150,24 @@ def process_kleene_closure(exp_stack):
     # Processa o fecho de Kleene
     expression = pop_until_open_parenthesis(exp_stack)
     expression_elements = [c for c in expression if c not in SPECIAL_CHARS]
- 
-    S1 = State()
-    S2 = State(is_final=True)
- 
-    S1.add_transition('ε', S1)
-    S1.add_transition(expression_elements[0], S2)
-    S2.add_transition(expression_elements[1], S1)
- 
-    nfa = NFA(S1)
-    nfa.add_state(S1)
-    nfa.add_state(S2)
- 
+
+    # Cria um estado inicial que também é o estado final (aceitação)
+    initial_state = State(is_final=True)
+    current_state = initial_state
+
+    # Cria um NFA com o estado inicial
+    nfa = NFA(initial_state)
+
+    # Loop para adicionar estados e transições para cada elemento na expressão
+    for element in expression_elements:
+        next_state = State()
+        current_state.add_transition(element, next_state)
+        nfa.add_state(next_state)
+        current_state = next_state
+
+    # Adiciona transição epsilon do último estado para o estado inicial
+    current_state.add_transition('ε', initial_state)
+
     return nfa
  
 def process_optional(exp_stack):
@@ -194,6 +207,61 @@ def process_character_set(expression, exp_stack):
     nfa.add_state(final_state)
     return nfa
  
+def print_nfa(nfa):
+    # Cria um mapeamento completo de todos os estados acessíveis a partir do estado inicial
+    state_index = {}
+    states_to_process = [nfa.start_state]
+    index = 0
+
+    # Uso de BFS para mapear todos os estados com índices únicos
+    while states_to_process:
+        current_state = states_to_process.pop(0)
+        if current_state not in state_index:
+            state_index[current_state] = index
+            index += 1
+            # Adiciona estados de transições simbólicas ao BFS queue
+            for symbol_transitions in current_state.transitions.values():
+                for state in symbol_transitions:
+                    if state not in state_index:
+                        states_to_process.append(state)
+            # Adiciona estados de transições epsilon ao BFS queue
+            for state in current_state.episilon_transitions:
+                if state not in state_index:
+                    states_to_process.append(state)
+
+    # Imprime as transições de cada estado
+    print("NFA:")
+    for state in state_index:
+        state_idx = state_index[state]
+        print(f'Transições do estado {state_idx}:')
+        for symbol, transitions in state.transitions.items():
+            for transition in transitions:
+                transition_idx = state_index[transition]
+                print(f"  Símbolo: {symbol}, Vai para: Estado {transition_idx}")
+        for transition in state.episilon_transitions:
+            transition_idx = state_index[transition]
+            print(f"  Símbolo: ε, Vai para: Estado {transition_idx}")
+
+def add_epsilon_transitions_between_nfas(nfas):
+    combined_nfa = nfas[0]  # Começa com o primeiro NFA
+
+    for i in range(len(nfas) - 1):
+        current_nfa = nfas[i]
+        next_nfa = nfas[i + 1]
+
+        final_states_current = [state for state in current_nfa.states if state.is_final]
+        start_state_next = next_nfa.start_state
+
+        # Adicionar transições epsilon dos estados finais do NFA atual para o estado inicial do próximo NFA
+        for final_state in final_states_current:
+            if start_state_next not in final_state.episilon_transitions:
+                final_state.add_transition('ε', start_state_next)
+
+        # Agora, adicione todos os estados do próximo NFA ao NFA combinado
+        combined_nfa.merge_nfa(next_nfa)
+
+    return combined_nfa
+
 def scan_expression(exp: str):
     exp_splitted = list(exp)
     exp_stack = []
@@ -239,9 +307,15 @@ def scan_expression(exp: str):
         else:
             exp_stack.append(c)
  
+    nfa_final = add_epsilon_transitions_between_nfas(nfas)
     # print(exp_splitted)
     print(exp_stack)
+
+
+    print_nfa(nfa_final)
+
+
     return exp
  
  
-scan_expression("(a,b)+,(a,ε)+")
+scan_expression("(ab)+(7)*(@)+")
