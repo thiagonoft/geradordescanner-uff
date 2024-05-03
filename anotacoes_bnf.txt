@@ -1,0 +1,108 @@
+o arquivo com simbolos 'gerador_de_first_follow.py' têm
+na definição das regras 78 símbolos únicos (já tirando o | que usei
+como '\n')
+
+<Lines>
+<Statements>
+<Statement>
+<Access>
+<ID List>
+<Value List>
+<Constant List>
+<Integer List>
+<Expression List>
+<Print List>
+<Expression>
+<And Exp>
+<Not Exp>
+<Compare Exp>
+<Add Exp>
+<Mult Exp>
+<Negate Exp>
+<Power Exp>
+<Power Exp'>
+<Value>
+<Constant>
+
+equivale
+
+D
+B
+E
+a
+V
+d
+H
+K
+q
+f
+N
+r
+t
+w
+x
+y
+z
+!
+#
+Z
+p
+
+20 simbolos nao terminais
+
+simbolos terminais (nao estao em ordem):
+m
+$
+R
+i
+k
+J
+F
+T
+c
+s
+Q
+W
+*
+S
+e
+C
+g
+G
+b
+}
+v
+U
+)
+[
+X
+?
+{
+¨
+Y
+h
+]
+'
+(
+,
+:
+A
+P
+o
++
+n
+L
+O
+;
+u
+j
+.
+&
+<
+I
+l
+=
+M
+%
+
+52 simbolos terminais
