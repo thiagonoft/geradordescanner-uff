@@ -1,25 +1,48 @@
-GRAMMAR_TABLE={}
+# _[LETRA] = [SIMBOLO], onde [LETRA] é A até V
 
+# ! = !
+# # = #
+# $ = $
+# % = %
+# ¨ = ¨
+# & = &
+# * = *
+# ( = (
+# ) = )
+# < = <
+# ' = '
+# + = +
+# = = =
+# . = .
+# , = ,
+# : = :
+# ; = ;
+# ? = ?
+# [ = [
+# ] = ]
+# { = {
+# } = }
 """
+
 D->ABCD/ABC
-B->E_EB/E
-E->F_FA/GH/IJ_GK_H/L/MJ_INON/MJ_INONPA/QN/RN/SNTE/UV/U_FA_JV/WJ_IN/XV/YZMab_FA/cd/ef/e_FA_Jf/gV/h/i/j/k/lZ/md/n
+B->E¨B/E
+E->F&A/GH/IJ*K(/L/MJ)NON/MJ)NONPA/QN/RN/SNTE/UV/U&A<V/WJ)N/XV/YZMab&A/cd/ef/e&A<f/gV/h/i/j/k/lZ/md/n
 a->U/o
-V->J_JV/J
-d->Z_Jd/Z
-H->p_JH/p
-K->A_JK/A
-q->N_Jq/N
-f->N_Kf/N/@
+V->J<V/J
+d->Z<d/Z
+H->p<H/p
+K->A<K/A
+q->N<q/N
+f->N'f/N/@
 N->rsN/r
 r->tur/t
 t->vw/w
-w->x_Iw/x_Lw/x_Mw/x_Nw/x_Ow/x_Pw/x_Qw/x
-x->y_Rx/y_Sx/y
-y->z_Ty/z_Uy/z
-z->_S_A/_A
-_A->Z_B/Z
-_B->_V_A
-Z->_GN_H/J/J_Gq_H/p
-p->A/_C/_D
+w->x)w/x+w/x=w/x.w/x,w/x:w/x;w/x
+x->y?x/y[x/y
+y->z]y/z{y/z
+z->[!/!
+!->Z#/Z
+#->}!
+Z->*N(/J/J*q(/p
+p->A/$/%
 """

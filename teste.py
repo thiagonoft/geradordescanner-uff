@@ -1,6 +1,6 @@
 import re
 
-PROGRAM_INPUT = "int x = 10;"
+PROGRAM_INPUT = input()
 
 KEYWORDS = [
     "int",
@@ -15,8 +15,8 @@ OPERATORS = [
     "="
 ]
 
-IDENTIFIER_REGEX = r"([A-z](?:[A-z]|[0-9])*)"
-# IDENTIFIER_REGEX = r"([A-z]+)|[A-z](([A-z]|[0-9])*)"
+# IDENTIFIER_REGEX = r"([A-z](?:[A-z]|[0-9])*)"
+IDENTIFIER_REGEX = r"[A-z](([A-z]|[0-9])*)"
 
 CONSTANT_REGEX = r"[0-9]+"
 # ????? nao sei pq n deu
