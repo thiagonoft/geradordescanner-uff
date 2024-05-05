@@ -62,6 +62,7 @@ def follow(nT):
                             continue
                         else:
                             follow_ = follow_ | follow(nt)
+                            print("nt=",nt)
                     else:
                         follow_2 = first(following_str)
                         if '@' in follow_2:

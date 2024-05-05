@@ -48,7 +48,7 @@ z
 Z
 p
 
-20 simbolos nao terminais
+21 simbolos nao terminais
 
 simbolos terminais (nao estao em ordem):
 m
