@@ -1,26 +1,3 @@
-
-                | FOR ID '=' <Expression> TO <Expression>     
-                | FOR ID '=' <Expression> TO <Expression> STEP Integer      
-                | GOTO <Expression> 
-                | GOSUB <Expression> 
-                | IF <Expression> THEN <Statement>         
-                | INPUT <ID List>       
-                | INPUT '#' Integer ',' <ID List>       
-                | LET Id '=' <Expression> 
-                | NEXT <ID List>               
-                | OPEN <Value> FOR <Access> AS '#' Integer
-                | POKE <Value List>
-                | PRINT <Print List>
-                | PRINT '#' Integer ',' <Print List>
-                | READ <ID List>           
-                | RETURN
-                | RESTORE
-                | RUN
-                | STOP
-                | SYS <Value>
-                | WAIT <Value List>
-                | Remark
-
 <Access>   ::= INPUT
              | OUPUT
                    

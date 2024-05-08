@@ -1,75 +1,3 @@
-"""
-
-MJ)NON/
-MJ)NONPA/
-QN/
-RN/
-SNTE/
-UV/
-U&A<V/
-WJ)N/
-XV/
-YZMab&A/
-cd/
-ef/
-e&A<f/
-gV/
-h/
-i/
-j/
-k/
-lZ/
-md/
-n
-a->U/
-o
-V->J<V/
-J
-d->Z<d/
-Z
-H->p<H/
-p
-K->A<K/
-A
-q->N<q/
-N
-f->N'f/
-N/
-@
-N->rsN/
-r
-r->tur/
-t
-t->vw/
-w
-w->x)w/
-x+w/
-x=w/
-x.w/
-x,w/
-x:w/
-x;w/
-x
-x->y?x/
-y[x/
-y
-y->z]y/
-z{y/
-z
-z->[!/
-!
-!->Z#/
-Z
-#->}!
-Z->*N(/
-J/
-J*q(/
-p
-p->A/
-$/
-%
-"""
-
 symbols_conversion = {
     "D":"<Lines>",
     "B":"<Statements>",
@@ -106,8 +34,44 @@ symbols_conversion = {
     "M":"FOR",
     ")":"'='",
     "O":"TO",
-    "":"",
-    "":"",
-    "":"",
-    "":"",
+    "P":"STEP",
+    "Q":"GOTO",
+    "R":"GOSUB",
+    "S":"IF",
+    "T":"THEN",
+    "U":"INPUT",
+    "<":"','",
+    "W":"LET",
+    "X":"NEXT",
+    "Y":"OPEN",
+    "b":"AS",
+    "c":"POKE",
+    "e":"PRINT",
+    "g":"READ",
+    "h":"RETURN",
+    "i":"RESTORE",
+    "j":"RUN",
+    "k":"STOP",
+    "l":"SYS",
+    "m":"WAIT",
+    "n":"Remark",
+    "o":"OUTPUT",
+    "$":"Real",
+    "s":"OR"
 }
+
+if __name__ == "__main__":
+    production_rules = ""
+    with open("production_rules.txt", "r") as f:
+        for line in f:
+            production_rules += line
+    # print(production_rules)
+
+    p = list(production_rules)
+    for i, c in enumerate(p):
+        if c in symbols_conversion:
+            p[i] = '_'
+        # if c in symbols_conversion:
+        #     p[i] = symbols_conversion[c]
+        
+    print("".join(p))
