@@ -56,8 +56,26 @@ symbols_conversion = {
     "m":"WAIT",
     "n":"Remark",
     "o":"OUTPUT",
-    "$":"Real",
-    "s":"OR"
+    "$":"String",
+    "s":"OR",
+    "'":"';'",
+    "}":"'^'",
+    "u":"AND",
+    "v":"NOT",
+    "+":"'<>'",
+    "=":"'><'",
+    ".":"'>'",
+    ",":"'>='",
+    ":":"'<'",
+    ";":"'<=",
+    "?":"'+'",
+    "[":"'-'",
+    "]":"'*'",
+    "{":"'/'",
+    "%":"Real"
+    # "":"",
+    # "":"",
+    # "":"",
 }
 
 if __name__ == "__main__":
@@ -70,7 +88,12 @@ if __name__ == "__main__":
     p = list(production_rules)
     for i, c in enumerate(p):
         if c in symbols_conversion:
-            p[i] = '_'
+            p[i] = symbols_conversion[c]
+        elif c in ['-', '>', '/', '\n']:
+            p[i] = c
+        else:
+            p[i] = '?????'
+        
         # if c in symbols_conversion:
         #     p[i] = symbols_conversion[c]
         

@@ -20,6 +20,8 @@
                     | <Expression> 
                     |  
 
+TA AQUI O ERRO
+
 <Expression>  ::= <And Exp> OR <Expression> 
                 | <And Exp> 
 
