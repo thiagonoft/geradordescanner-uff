@@ -73,9 +73,6 @@ symbols_conversion = {
     "]":"'*'",
     "{":"'/'",
     "%":"Real"
-    # "":"",
-    # "":"",
-    # "":"",
 }
 
 if __name__ == "__main__":
@@ -89,10 +86,14 @@ if __name__ == "__main__":
     for i, c in enumerate(p):
         if c in symbols_conversion:
             p[i] = symbols_conversion[c]
-        elif c in ['-', '>', '/', '\n']:
-            p[i] = c
         else:
-            p[i] = '?????'
+            if c in ['-', '>']:
+                p[i] = ' ::' if c == '-' else "= "
+            else:
+                if c in ['/', '\n']:
+                    p[i] = "\n\t| " if c == '/' else '\n'
+                else:
+                    p[i] = "?????"
         
         # if c in symbols_conversion:
         #     p[i] = symbols_conversion[c]

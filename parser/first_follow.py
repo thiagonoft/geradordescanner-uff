@@ -2,6 +2,83 @@
 import sys
 sys.setrecursionlimit(60)
 
+symbols_conversion = {
+    "D":"<Lines>",
+    "B":"<Statements>",
+    "E":"<Statement>",
+    "a":"<Access>",
+    "V":"<ID List>",
+    "d":"<Value List>",
+    "H":"<Constant List>",
+    "K":"<Integer List>",
+    "q":"<Expression List>",
+    "f":"<Print List>",
+    "N":"<Expression>",
+    "r":"<And Exp>",
+    "t":"<Not Exp>",
+    "w":"<Compare Exp>",
+    "x":"<Add Exp>",
+    "y":"<Mult Exp>",
+    "z":"<Negate Exp>",
+    "!":"<Power Exp>",
+    "#":"<Power Exp'>",
+    "Z":"<Value>",
+    "p":"<Constant>",
+    "A":"Integer",
+    "C":"NewLine",
+    "¨":"':'",
+    "F":"CLOSE",
+    "&":"'#'",
+    "G":"DATA",
+    "I":"DIM",
+    "J":"ID",
+    "*":"'('",
+    "(":"')'",
+    "L":"END",
+    "M":"FOR",
+    ")":"'='",
+    "O":"TO",
+    "P":"STEP",
+    "Q":"GOTO",
+    "R":"GOSUB",
+    "S":"IF",
+    "T":"THEN",
+    "U":"INPUT",
+    "<":"','",
+    "W":"LET",
+    "X":"NEXT",
+    "Y":"OPEN",
+    "b":"AS",
+    "c":"POKE",
+    "e":"PRINT",
+    "g":"READ",
+    "h":"RETURN",
+    "i":"RESTORE",
+    "j":"RUN",
+    "k":"STOP",
+    "l":"SYS",
+    "m":"WAIT",
+    "n":"Remark",
+    "o":"OUTPUT",
+    "$":"String",
+    "s":"OR",
+    "'":"';'",
+    "}":"'^'",
+    "u":"AND",
+    "v":"NOT",
+    "+":"'<>'",
+    "=":"'><'",
+    ".":"'>'",
+    ",":"'>='",
+    ":":"'<'",
+    ";":"'<=",
+    "?":"'+'",
+    "[":"'-'",
+    "]":"'*'",
+    "{":"'/'",
+    "%":"Real"
+}
+
 def first(string):
     #print("first({})".format(string))
     first_ = set()
@@ -62,7 +139,7 @@ def follow(nT):
                             continue
                         else:
                             follow_ = follow_ | follow(nt)
-                            print("nt=",nt)
+                            print(f"nt={nt}, ({symbols_conversion[nt]})")
                     else:
                         follow_2 = first(following_str)
                         if '@' in follow_2:

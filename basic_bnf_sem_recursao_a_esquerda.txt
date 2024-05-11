@@ -120,7 +120,7 @@ Real           = {digit}+.{digit}+
 
 <Print List>      ::= <Expression> ';' <Print List>
                     | <Expression> 
-                    |  
+                    | Epsilon
 
 <Expression>  ::= <And Exp> OR <Expression> 
                 | <And Exp> 
