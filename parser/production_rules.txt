@@ -7,7 +7,7 @@ d->Z<d/Z
 H->p<H/p
 K->A<K/A
 q->N<q/N
-f->N'f/N/@
+f->N'f/N/~
 N->rsN/r
 r->tur/t
 t->vw/w
