@@ -255,7 +255,7 @@ def print_nfa(nfa):
         state_idx = state_index[state]
         print(f'Transições do estado {state_idx}:')
         if state.is_final:
-            print(f'Este estado é FINAL')
+            print(f'  Este estado é FINAL')
         for symbol, transitions in state.transitions.items():
             for transition in transitions:
                 transition_idx = state_index[transition]
@@ -279,6 +279,7 @@ def add_epsilon_transitions_between_nfas(nfas):
         for final_state in final_states_current:
             if start_state_next not in final_state.episilon_transitions:
                 final_state.add_transition('ε', start_state_next)
+                final_state.is_final = False  # Remove o estado final
 
         # Agora, adicione todos os estados do próximo NFA ao NFA combinado
         combined_nfa.merge_nfa(next_nfa)
@@ -339,4 +340,4 @@ def scan_expression(exp: str):
     return exp
 
 
-scan_expression("(a,T)*")
+scan_expression('[0-9]+')
