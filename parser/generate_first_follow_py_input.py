@@ -1,27 +1,10 @@
-production = """D->ABCD/ABC
-B->E¨B/E
-E->F&A/GH/IJ*K(/L/MJ)NON/MJ)NONPA/QN/RN/SNTE/UV/U&A<V/WJ)N/XV/YZMab&A/cd/ef/e&A<f/gV/h/i/j/k/lZ/md/n
-a->U/o
-V->J<V/J
-d->Z<d/Z
-H->p<H/p
-K->A<K/A
-q->N<q/N
-f->N'f/N/@
-N->rsN/r
-r->tur/t
-t->vw/w
-w->x)w/x+w/x=w/x.w/x,w/x:w/x;w/x
-x->y?x/y[x/y
-y->z]y/z{y/z
-z->[!/!
-!->Z#/Z
-#->}!
-Z->*N(/J/J*q(/p
-p->A/$/%"""
+production_rules = ""
+with open("production_rules.txt", "r") as f:
+    for line in f:
+        production_rules += line
 
-production_list = production.split("\n")
-print(production_list)
+production_list = production_rules.split("\n")
+# print(production_list)
 left_side = []
 right_side = []
 for p in production_list:
@@ -37,16 +20,18 @@ right_side_set_2 = right_side_set.copy()
 for l in left_side_set:
     right_side_set_2.remove(l)
 right_side_set_2.remove("/")
+right_side_set_2.remove("@")
 
-print("-------------------------------------------------")
-print("TERMINALS ({})".format(len(right_side_set_2)))
-for r in right_side_set_2:
+# print("-------------------------------------------------")
+print(len(right_side_set_2)) #NUM. OF TERMINALS
+for r in right_side_set_2: # TERMINALS
     print(r)
 
-print("NON-TERMINALS ({})".format(len(left_side_set)))
-for l in left_side_set:
+print(len(left_side_set)) # NUM. OF NON-TERMINALS
+for l in left_side_set: # NON-TERMINALS
     print(l)
 
-print("PRODUCTIONS ({})".format(len(production_list)))
-for p in production_list:
+print(production_list[0][0]) # STARTING SYMBOL
+print(len(production_list)) # NUM. OF PRODUCTIONS
+for p in production_list: # PRODUCTIONS
     print(p)
