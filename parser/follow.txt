@@ -1,24 +1,24 @@
+
+<Lines> = $, 
+<Statement>
 <Statements>
-<Expression>
-<Lines>
-<Constant>
+<Access>
 <ID List>
 <ID List'>
-<Compare Exp>
-<Access>
-<Add Exp>
-<Power Exp>
-<Power Exp'>
-<Mult Exp>
-<And Exp>
-<Integer List'>
-<Statement>
-<Not Exp>
-<Compare Exp>
-<Expression List>
-<Negate Exp>
+<Value List>
 <Constant List>
 <Integer List>
-<Value>
-<Value List>
+<Integer List'>
+<Expression List>
 <Print List>
+<Expression>
+<And Exp>
+<Not Exp>
+<Compare Exp>
+<Add Exp>
+<Mult Exp>
+<Negate Exp>
+<Power Exp>
+<Power Exp'>
+<Constant>
+<Value>
