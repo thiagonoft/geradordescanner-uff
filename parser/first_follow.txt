@@ -1,3 +1,5 @@
+## Se a tabela M[A, a] for possivel de ser feita sem conflito, entao é LL(1)
+
 ::::FIRST::::
 FIRST(<Statement>) = ['READ', 'OPEN', 'Remark', 'RESTORE', 'LET', 'DATA', 'STOP', 'RUN', 'INPUT', 'RETURN', 'NEXT', 'WAIT', 'GOTO', 'DIM', 'SYS', 'CLOSE', 'IF', 'FOR', 'END', 'PRINT', 'POKE', 'GOSUB']
 FIRST(<CompareExp>) = ['ID', 'Real', "'-'", "'('", 'Integer', 'String']
