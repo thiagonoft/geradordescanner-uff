@@ -20,7 +20,6 @@ right_side_set_2 = right_side_set.copy()
 for l in left_side_set:
     right_side_set_2.remove(l)
 right_side_set_2.remove("/")
-right_side_set_2.remove("@")
 
 # print("-------------------------------------------------")
 print(len(right_side_set_2)) #NUM. OF TERMINALS
