@@ -103,10 +103,8 @@ Real           = {digit}+.{digit}+
 <Access>   ::= INPUT
              | OUTPUT
                    
-<ID List>  ::= ID <ID List'>
-             | ID
-
-<ID List'> ::= ',' <ID List>
+<ID List>  ::= ID ',' <ID List> 
+             | ID 
 
 <Value List>      ::= <Value> ',' <Value List> 
                     | <Value> 
@@ -114,10 +112,8 @@ Real           = {digit}+.{digit}+
 <Constant List>   ::= <Constant> ',' <Constant List> 
                     | <Constant> 
 
-<Integer List>    ::= Integer <Integer List'>
+<Integer List>    ::= Integer ',' <Integer List>
                     | Integer
-
-<Integer List'>   ::= ',' <Integer List>
                 
 <Expression List> ::= <Expression> ',' <Expression List> 
                     | <Expression> 

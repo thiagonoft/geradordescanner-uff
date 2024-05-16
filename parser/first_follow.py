@@ -151,8 +151,8 @@ for non_terminal in non_terminals:
 for non_terminal in non_terminals:
     FIRST[non_terminal] = FIRST[non_terminal] | first(non_terminal)
 
-#print("FIRST",FIRST)
-
+print("FIRST:::::\n",FIRST)
+input("ENTER to continue...")
 
 FOLLOW[starting_symbol] = FOLLOW[starting_symbol] | {'$'}
 for non_terminal in non_terminals:
