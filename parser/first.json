@@ -1,0 +1,23 @@
+{
+    "<Statement>": ["READ", "OPEN", "Remark", "RESTORE", "LET", "DATA", "STOP", "RUN", "INPUT", "RETURN", "NEXT", "WAIT", "GOTO", "DIM", "SYS", "CLOSE", "IF", "FOR", "END", "PRINT", "POKE", "GOSUB"],
+    "<CompareExp>": ["ID", "Real", "-", "(", "Integer", "String"],
+    "<IntegerList>": ["Integer"],
+    "<AndExp>": ["ID", "Real", "-", "(", "Integer", "NOT", "String"],
+    "<Lines>": ["Integer"],
+    "<Access>": ["INPUT", "OUTPUT"],
+    "<ValueList>": ["ID", "Real", "(", "Integer", "String"],
+    "<PowerExp'>":  ["^"],
+    "<Statements>": ["READ", "OPEN", "Remark", "RESTORE", "LET", "DATA", "STOP", "RUN", "INPUT", "RETURN", "NEXT", "WAIT", "GOTO", "DIM", "SYS", "CLOSE", "IF", "FOR", "END", "PRINT", "POKE", "GOSUB"],
+    "<ConstantList>": ["String", "Integer", "Real"],
+    "<PrintList>": ["ID", "Branco", "Real", "-", "(", "Integer", "NOT", "String"],
+    "<ExpressionList>": ["ID", "Real", "-", "(", "Integer", "NOT", "String"],
+    "<NegateExp>": ["ID", "Real", "-", "(", "Integer", "String"],
+    "<NotExp>": ["ID", "Real", "-", "(", "Integer", "NOT", "String"],
+    "<PowerExp>": ["ID", "Real", "(", "Integer", "String"],
+    "<Constant>": ["String", "Integer", "Real"],
+    "<IDList>": ["ID"],
+    "<MultExp>": ["ID", "Real", "-", "(", "Integer", "String"],
+    "<Value>": ["ID", "Real", "(", "Integer", "String"],
+    "<AddExp>": ["ID", "Real", "-", "(", "Integer", "String"],
+    "<Expression>": ["ID", "Real", "-", "(", "Integer", "NOT", "String"]
+}

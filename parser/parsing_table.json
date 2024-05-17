@@ -1,0 +1,1114 @@
+{
+    "<Statement>": {
+        "RETURN": [
+            "<Statement> -> RETURN"
+        ],
+        "GOSUB": [
+            "<Statement> -> GOSUB <Expression>"
+        ],
+        "NOT": [],
+        "NEXT": [
+            "<Statement> -> NEXT <IDList>"
+        ],
+        "FOR": [
+            "<Statement> -> FOR ID = <Expression> TO <Expression>",
+            "<Statement> -> FOR ID = <Expression> TO <Expression> STEP Integer"
+        ],
+        "LET": [
+            "<Statement> -> LET ID = <Expression>"
+        ],
+        "POKE": [
+            "<Statement> -> POKE <ValueList>"
+        ],
+        "-": [],
+        "String": [],
+        "IF": [
+            "<Statement> -> IF <Expression> THEN <Statement>"
+        ],
+        "ID": [],
+        "Remark": [
+            "<Statement> -> Remark"
+        ],
+        "RUN": [
+            "<Statement> -> RUN"
+        ],
+        "PRINT": [
+            "<Statement> -> PRINT <PrintList>",
+            "<Statement> -> PRINT # Integer , <PrintList>"
+        ],
+        "CLOSE": [
+            "<Statement> -> CLOSE # Integer"
+        ],
+        "OPEN": [
+            "<Statement> -> OPEN <Value> FOR <Access> AS # Integer"
+        ],
+        "WAIT": [
+            "<Statement> -> WAIT <ValueList>"
+        ],
+        "STOP": [
+            "<Statement> -> STOP"
+        ],
+        "Branco": [],
+        "DIM": [
+            "<Statement> -> DIM ID ( <IntegerList> )"
+        ],
+        "Real": [],
+        "DATA": [
+            "<Statement> -> DATA <ConstantList>"
+        ],
+        "SYS": [
+            "<Statement> -> SYS <Value>"
+        ],
+        "OUTPUT": [],
+        "END": [
+            "<Statement> -> END"
+        ],
+        "Integer": [],
+        "INPUT": [
+            "<Statement> -> INPUT <IDList>",
+            "<Statement> -> INPUT # Integer , <IDList>"
+        ],
+        "READ": [
+            "<Statement> -> READ <IDList>"
+        ],
+        "(": [],
+        "GOTO": [
+            "<Statement> -> GOTO <Expression>"
+        ],
+        "RESTORE": [
+            "<Statement> -> RESTORE"
+        ],
+        "^": []
+    },
+    "<CompareExp>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [
+            "<CompareExp> -> <AddExp> = <CompareExp>",
+            "<CompareExp> -> <AddExp> <> <CompareExp>",
+            "<CompareExp> -> <AddExp> >< <CompareExp>",
+            "<CompareExp> -> <AddExp> > <CompareExp>",
+            "<CompareExp> -> <AddExp> >= <CompareExp>",
+            "<CompareExp> -> <AddExp> < <CompareExp>",
+            "<CompareExp> -> <AddExp> <= <CompareExp>",
+            "<CompareExp> -> <AddExp>"
+        ],
+        "String": [
+            "<CompareExp> -> <AddExp> = <CompareExp>",
+            "<CompareExp> -> <AddExp> <> <CompareExp>",
+            "<CompareExp> -> <AddExp> >< <CompareExp>",
+            "<CompareExp> -> <AddExp> > <CompareExp>",
+            "<CompareExp> -> <AddExp> >= <CompareExp>",
+            "<CompareExp> -> <AddExp> < <CompareExp>",
+            "<CompareExp> -> <AddExp> <= <CompareExp>",
+            "<CompareExp> -> <AddExp>"
+        ],
+        "IF": [],
+        "ID": [
+            "<CompareExp> -> <AddExp> = <CompareExp>",
+            "<CompareExp> -> <AddExp> <> <CompareExp>",
+            "<CompareExp> -> <AddExp> >< <CompareExp>",
+            "<CompareExp> -> <AddExp> > <CompareExp>",
+            "<CompareExp> -> <AddExp> >= <CompareExp>",
+            "<CompareExp> -> <AddExp> < <CompareExp>",
+            "<CompareExp> -> <AddExp> <= <CompareExp>",
+            "<CompareExp> -> <AddExp>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<CompareExp> -> <AddExp> = <CompareExp>",
+            "<CompareExp> -> <AddExp> <> <CompareExp>",
+            "<CompareExp> -> <AddExp> >< <CompareExp>",
+            "<CompareExp> -> <AddExp> > <CompareExp>",
+            "<CompareExp> -> <AddExp> >= <CompareExp>",
+            "<CompareExp> -> <AddExp> < <CompareExp>",
+            "<CompareExp> -> <AddExp> <= <CompareExp>",
+            "<CompareExp> -> <AddExp>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<CompareExp> -> <AddExp> = <CompareExp>",
+            "<CompareExp> -> <AddExp> <> <CompareExp>",
+            "<CompareExp> -> <AddExp> >< <CompareExp>",
+            "<CompareExp> -> <AddExp> > <CompareExp>",
+            "<CompareExp> -> <AddExp> >= <CompareExp>",
+            "<CompareExp> -> <AddExp> < <CompareExp>",
+            "<CompareExp> -> <AddExp> <= <CompareExp>",
+            "<CompareExp> -> <AddExp>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<CompareExp> -> <AddExp> = <CompareExp>",
+            "<CompareExp> -> <AddExp> <> <CompareExp>",
+            "<CompareExp> -> <AddExp> >< <CompareExp>",
+            "<CompareExp> -> <AddExp> > <CompareExp>",
+            "<CompareExp> -> <AddExp> >= <CompareExp>",
+            "<CompareExp> -> <AddExp> < <CompareExp>",
+            "<CompareExp> -> <AddExp> <= <CompareExp>",
+            "<CompareExp> -> <AddExp>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<IntegerList>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [],
+        "IF": [],
+        "ID": [],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<IntegerList> -> Integer , <IntegerList>",
+            "<IntegerList> -> Integer"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<AndExp>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [
+            "<AndExp> -> <NotExp> AND <AndExp>",
+            "<AndExp> -> <NotExp>"
+        ],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [
+            "<AndExp> -> <NotExp> AND <AndExp>",
+            "<AndExp> -> <NotExp>"
+        ],
+        "String": [
+            "<AndExp> -> <NotExp> AND <AndExp>",
+            "<AndExp> -> <NotExp>"
+        ],
+        "IF": [],
+        "ID": [
+            "<AndExp> -> <NotExp> AND <AndExp>",
+            "<AndExp> -> <NotExp>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<AndExp> -> <NotExp> AND <AndExp>",
+            "<AndExp> -> <NotExp>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<AndExp> -> <NotExp> AND <AndExp>",
+            "<AndExp> -> <NotExp>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<AndExp> -> <NotExp> AND <AndExp>",
+            "<AndExp> -> <NotExp>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<Lines>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [],
+        "IF": [],
+        "ID": [],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<Lines> -> Integer <Statements> NewLine <Lines>",
+            "<Lines> -> Integer <Statements> NewLine"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<Access>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [],
+        "IF": [],
+        "ID": [],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [
+            "<Access> -> OUTPUT"
+        ],
+        "END": [],
+        "Integer": [],
+        "INPUT": [
+            "<Access> -> INPUT"
+        ],
+        "READ": [],
+        "(": [],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<ValueList>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [
+            "<ValueList> -> <Value> , <ValueList>",
+            "<ValueList> -> <Value>"
+        ],
+        "IF": [],
+        "ID": [
+            "<ValueList> -> <Value> , <ValueList>",
+            "<ValueList> -> <Value>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<ValueList> -> <Value> , <ValueList>",
+            "<ValueList> -> <Value>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<ValueList> -> <Value> , <ValueList>",
+            "<ValueList> -> <Value>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<ValueList> -> <Value> , <ValueList>",
+            "<ValueList> -> <Value>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<PowerExp'>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [],
+        "IF": [],
+        "ID": [],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [],
+        "INPUT": [],
+        "READ": [],
+        "(": [],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<Statements>": {
+        "RETURN": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "GOSUB": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "NOT": [],
+        "NEXT": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "FOR": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "LET": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "POKE": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "-": [],
+        "String": [],
+        "IF": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "ID": [],
+        "Remark": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "RUN": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "PRINT": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "CLOSE": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "OPEN": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "WAIT": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "STOP": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "Branco": [],
+        "DIM": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "Real": [],
+        "DATA": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "SYS": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "OUTPUT": [],
+        "END": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "Integer": [],
+        "INPUT": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "READ": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "(": [],
+        "GOTO": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "RESTORE": [
+            "<Statements> -> <Statement> : <Statements>",
+            "<Statements> -> <Statement>"
+        ],
+        "^": []
+    },
+    "<ConstantList>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [
+            "<ConstantList> -> <Constant> , <ConstantList>",
+            "<ConstantList> -> <Constant>"
+        ],
+        "IF": [],
+        "ID": [],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<ConstantList> -> <Constant> , <ConstantList>",
+            "<ConstantList> -> <Constant>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<ConstantList> -> <Constant> , <ConstantList>",
+            "<ConstantList> -> <Constant>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<PrintList>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [
+            "<PrintList> -> <Expression> ; <PrintList>",
+            "<PrintList> -> <Expression>"
+        ],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [
+            "<PrintList> -> <Expression> ; <PrintList>",
+            "<PrintList> -> <Expression>"
+        ],
+        "String": [
+            "<PrintList> -> <Expression> ; <PrintList>",
+            "<PrintList> -> <Expression>"
+        ],
+        "IF": [],
+        "ID": [
+            "<PrintList> -> <Expression> ; <PrintList>",
+            "<PrintList> -> <Expression>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [
+            "<PrintList> -> Branco"
+        ],
+        "DIM": [],
+        "Real": [
+            "<PrintList> -> <Expression> ; <PrintList>",
+            "<PrintList> -> <Expression>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<PrintList> -> <Expression> ; <PrintList>",
+            "<PrintList> -> <Expression>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<PrintList> -> <Expression> ; <PrintList>",
+            "<PrintList> -> <Expression>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<ExpressionList>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [
+            "<ExpressionList> -> <Expression> , <ExpressionList>",
+            "<ExpressionList> -> <Expression>"
+        ],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [
+            "<ExpressionList> -> <Expression> , <ExpressionList>",
+            "<ExpressionList> -> <Expression>"
+        ],
+        "String": [
+            "<ExpressionList> -> <Expression> , <ExpressionList>",
+            "<ExpressionList> -> <Expression>"
+        ],
+        "IF": [],
+        "ID": [
+            "<ExpressionList> -> <Expression> , <ExpressionList>",
+            "<ExpressionList> -> <Expression>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<ExpressionList> -> <Expression> , <ExpressionList>",
+            "<ExpressionList> -> <Expression>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<ExpressionList> -> <Expression> , <ExpressionList>",
+            "<ExpressionList> -> <Expression>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<ExpressionList> -> <Expression> , <ExpressionList>",
+            "<ExpressionList> -> <Expression>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<NegateExp>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [
+            "<NegateExp> -> - <PowerExp>"
+        ],
+        "String": [
+            "<NegateExp> -> <PowerExp>"
+        ],
+        "IF": [],
+        "ID": [
+            "<NegateExp> -> <PowerExp>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<NegateExp> -> <PowerExp>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<NegateExp> -> <PowerExp>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<NegateExp> -> <PowerExp>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<NotExp>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [
+            "<NotExp> -> NOT <CompareExp>"
+        ],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [
+            "<NotExp> -> <CompareExp>"
+        ],
+        "String": [
+            "<NotExp> -> <CompareExp>"
+        ],
+        "IF": [],
+        "ID": [
+            "<NotExp> -> <CompareExp>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<NotExp> -> <CompareExp>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<NotExp> -> <CompareExp>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<NotExp> -> <CompareExp>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<PowerExp>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [
+            "<PowerExp> -> <Value> <PowerExp>",
+            "<PowerExp> -> <Value>"
+        ],
+        "IF": [],
+        "ID": [
+            "<PowerExp> -> <Value> <PowerExp>",
+            "<PowerExp> -> <Value>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<PowerExp> -> <Value> <PowerExp>",
+            "<PowerExp> -> <Value>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<PowerExp> -> <Value> <PowerExp>",
+            "<PowerExp> -> <Value>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<PowerExp> -> <Value> <PowerExp>",
+            "<PowerExp> -> <Value>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": [
+            "<PowerExp> -> ^ <PowerExp>"
+        ]
+    },
+    "<Constant>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [
+            "<Constant> -> String"
+        ],
+        "IF": [],
+        "ID": [],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<Constant> -> Real"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<Constant> -> Integer"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<IDList>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [],
+        "IF": [],
+        "ID": [
+            "<IDList> -> ID , <IDList>",
+            "<IDList> -> ID"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [],
+        "INPUT": [],
+        "READ": [],
+        "(": [],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<MultExp>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [
+            "<MultExp> -> <NegateExp> * <MultExp>",
+            "<MultExp> -> <NegateExp> / <MultExp>",
+            "<MultExp> -> <NegateExp>"
+        ],
+        "String": [
+            "<MultExp> -> <NegateExp> * <MultExp>",
+            "<MultExp> -> <NegateExp> / <MultExp>",
+            "<MultExp> -> <NegateExp>"
+        ],
+        "IF": [],
+        "ID": [
+            "<MultExp> -> <NegateExp> * <MultExp>",
+            "<MultExp> -> <NegateExp> / <MultExp>",
+            "<MultExp> -> <NegateExp>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<MultExp> -> <NegateExp> * <MultExp>",
+            "<MultExp> -> <NegateExp> / <MultExp>",
+            "<MultExp> -> <NegateExp>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<MultExp> -> <NegateExp> * <MultExp>",
+            "<MultExp> -> <NegateExp> / <MultExp>",
+            "<MultExp> -> <NegateExp>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<MultExp> -> <NegateExp> * <MultExp>",
+            "<MultExp> -> <NegateExp> / <MultExp>",
+            "<MultExp> -> <NegateExp>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<Value>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [],
+        "String": [
+            "<Value> -> <Constant>"
+        ],
+        "IF": [],
+        "ID": [
+            "<Value> -> ID",
+            "<Value> -> ID ( <ExpressionList> )"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<Value> -> <Constant>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<Value> -> <Constant>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<Value> -> ( <Expression> )"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<AddExp>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [
+            "<AddExp> -> <MultExp> + <AddExp>",
+            "<AddExp> -> <MultExp> - <AddExp>",
+            "<AddExp> -> <MultExp>"
+        ],
+        "String": [
+            "<AddExp> -> <MultExp> + <AddExp>",
+            "<AddExp> -> <MultExp> - <AddExp>",
+            "<AddExp> -> <MultExp>"
+        ],
+        "IF": [],
+        "ID": [
+            "<AddExp> -> <MultExp> + <AddExp>",
+            "<AddExp> -> <MultExp> - <AddExp>",
+            "<AddExp> -> <MultExp>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<AddExp> -> <MultExp> + <AddExp>",
+            "<AddExp> -> <MultExp> - <AddExp>",
+            "<AddExp> -> <MultExp>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<AddExp> -> <MultExp> + <AddExp>",
+            "<AddExp> -> <MultExp> - <AddExp>",
+            "<AddExp> -> <MultExp>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<AddExp> -> <MultExp> + <AddExp>",
+            "<AddExp> -> <MultExp> - <AddExp>",
+            "<AddExp> -> <MultExp>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    },
+    "<Expression>": {
+        "RETURN": [],
+        "GOSUB": [],
+        "NOT": [
+            "<Expression> -> <AndExp> OR <Expression>",
+            "<Expression> -> <AndExp>"
+        ],
+        "NEXT": [],
+        "FOR": [],
+        "LET": [],
+        "POKE": [],
+        "-": [
+            "<Expression> -> <AndExp> OR <Expression>",
+            "<Expression> -> <AndExp>"
+        ],
+        "String": [
+            "<Expression> -> <AndExp> OR <Expression>",
+            "<Expression> -> <AndExp>"
+        ],
+        "IF": [],
+        "ID": [
+            "<Expression> -> <AndExp> OR <Expression>",
+            "<Expression> -> <AndExp>"
+        ],
+        "Remark": [],
+        "RUN": [],
+        "PRINT": [],
+        "CLOSE": [],
+        "OPEN": [],
+        "WAIT": [],
+        "STOP": [],
+        "Branco": [],
+        "DIM": [],
+        "Real": [
+            "<Expression> -> <AndExp> OR <Expression>",
+            "<Expression> -> <AndExp>"
+        ],
+        "DATA": [],
+        "SYS": [],
+        "OUTPUT": [],
+        "END": [],
+        "Integer": [
+            "<Expression> -> <AndExp> OR <Expression>",
+            "<Expression> -> <AndExp>"
+        ],
+        "INPUT": [],
+        "READ": [],
+        "(": [
+            "<Expression> -> <AndExp> OR <Expression>",
+            "<Expression> -> <AndExp>"
+        ],
+        "GOTO": [],
+        "RESTORE": [],
+        "^": []
+    }
+}
