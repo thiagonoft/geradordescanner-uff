@@ -1,4 +1,5 @@
 import re
+import unicodedata
 
 SPECIAL_CHARS = "+,)(.*"
 
@@ -330,23 +331,50 @@ def tokenize(regexes, basic_code):
     return tokens
 
 def preprocess_string(basic_code):
-    # Remover comentários
-    basic_code = re.sub(r"REM.*", "", basic_code, flags=re.IGNORECASE)
+    # Separar cada linha para tratamento individual
+    lines = basic_code.strip().split('\n')
+    processed_lines = []
 
-    # Separar strings entre aspas duplas
-    basic_code = re.sub(r'"([^"]*)"', lambda m: " " + m.group(1).replace(" ", "_") + " ", basic_code)
+    for line in lines:
+        # Ignorar comentários
+        if 'REM' in line:
+            continue
+        
+        # Substituir espaços em strings por '_'
+        in_quote = False
+        processed_line = ""
+        quote_content = ""
+        for char in line:
+            if char == '"':
+                if not in_quote:
+                    in_quote = True
+                    processed_line += '"'
+                else:
+                    in_quote = False
+                    processed_line += quote_content.replace(" ", "_") + '"'
+                    quote_content = ""
+            elif in_quote:
+                quote_content += char
+            else:
+                processed_line += char
+        
+        # Adicionar espaços antes e depois de operadores e delimitadores
+        delimiters = ['+', '-', '*', '/', '^', '=', '<', '>', ',', '(', ')', ':']
+        buffer = ""
+        new_line = ""
+        for char in processed_line:
+            if char in delimiters:
+                new_line += ' ' + buffer + ' ' + char + ' '
+                buffer = ""
+            else:
+                buffer += char
+        new_line += buffer
+        
+        # Normalizar espaços múltiplos para um único espaço e trim espaços extra
+        processed_line = ' '.join(new_line.split())
+        processed_lines.append(processed_line)
 
-    # Separar operadores aritméticos, relacionais e delimitadores
-    basic_code = re.sub(r'([+\-*/^=<>(),:])', r' \1 ', basic_code)
-
-    # Separar números e identificadores
-    basic_code = re.sub(r'([a-zA-Z_]\w*|[0-9]+(\.[0-9]+)?)', r' \1 ', basic_code)
-
-    # Remover espaços extras
-    basic_code = ' '.join(basic_code.split())
-
-    return basic_code
-
+    return '\n'.join(processed_lines)
 
 def main():
     regexes = {
@@ -387,54 +415,48 @@ def main():
         "[A][B][S]": "ABS",
         "[L][E][F][T][$]": "LEFT$",
         "[R][I][G][H][T][$]": "RIGHT$",
-        "[H][E][X][$]": "HEX$",
+        "[V][A][L]": "VAL",
+        "[S][T][R][$]": "STR$",
         "[M][I][D][$]": "MID$",
         "[L][E][N]": "LEN",
         "[A][S][C]": "ASC",
         "[C][H][R][$]": "CHR$",
         "[T][I][M][E][R]": "TIMER",
+        "[A][N][D]": "AND",
+        "[N][O][T]": "NOT",
+        "[O][R]": "OR",
         "[A_z]([0_z])*": "IDENTIFIER",
+        "[A_z]([0_z])*([$])*": "STRING IDENTIFIER",
         "[+-*/^]": "ARITHMETIC_OPERATOR",
         "[=<>]": "RELATIONAL_OPERATOR",
         "[<][=]": "LESS_EQUAL_OPERATOR",
         "[>][=]": "GREATER_EQUAL_OPERATOR",
         "[<][>]": "DIFFERENT_OPERATOR",
-        "[(),>:]": "DELIMITER",
+        "[(),>:;]": "DELIMITER",
         "([0_9])+([.])*([0_9])*": "NUMBER",
         #'["]([0-z])*([ ,])*([0-z])*["]': "STRING"
         '["]([ _~])*["]': "STRING"
     }
 
     basic_code = """
-        20 TEXT : 
-        30 LET S = 0
-        40 HOME :  
-        50 PRINT "Decimal","Hex"
-        60 PRINT "-------", "---"
-        70 FOR I = S to (20 + S) 
-        80 LET A = I
-        90 GOSUB 200
-        100 PRINT I, HEX$
-        110 NEXT I
-        120 GET V : 
-        130 LET S = S + 20
-        140 GOTO 40
-        150 END
-
-        200 LET HEX$ = ""  
-        210 LET B = A - INT (A/16) * 16 : 
-        220 IF B < 10 THEN H$ = STR$(B)
-        230 IF (B >= 10 AND B <= 15) THEN H$ = CHR$(65 + B - 10)
-        240 LET HEX$ = H$ + HEX$
-        250 LET A = (A - B) / 16
-        260 IF (A > 0) THEN GOTO 210
-        270 RETURN
+10 REM Cálculo de fatorial usando recursão
+20 INPUT "Digite um número: ", N
+30 PRINT "O fatorial de "; N; " é "; FACT(N)
+40 END
+50 DEF FNFACT(N)
+60 IF N = 0 THEN RETURN 1
+70 RETURN N * FNFACT(N - 1)
     """
-    preprocessed_code = preprocess_string(basic_code)
-    print(f"código preprocessado: {preprocessed_code}")
+
+    # remove os acentos antes de jogar na funcao preprocess_string
+    preprocessed_code = preprocess_string(''.join(ch for ch in unicodedata.normalize('NFKD', basic_code) if not unicodedata.combining(ch)))
+    # print(f"código preprocessado: {preprocessed_code}")
     tokens = tokenize(regexes, preprocessed_code)
+    f = open("parser/tokens_input.txt", "w+")
     for token in tokens:
-        print(token)
+        # print(token)
+        f.write(str(token) + '\n')
+    f.close()
 
 if __name__ == "__main__":
     main()
