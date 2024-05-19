@@ -5,6 +5,13 @@ class Tree:
         self.children = None
         self.data = data
 
+def countNonTerminals(list):
+    count = 0
+    for element in list:
+        if str(element)[0] == '<':
+            count += 1
+    return count
+
 with open('parsing_table.json') as json_file:
     PARSING_TABLE = json.load(json_file)
 
@@ -58,6 +65,8 @@ if token_without_annotation in TYPE_MAPPING_DICT:
 else:
     curr_token_type = token_without_annotation
 
+syntax_tree_stack = []
+
 flag = True
 while flag:
     while stack_top == curr_token_type:
@@ -86,7 +95,13 @@ while flag:
         look_ahead = look_ahead[0]
 
     symbols_to_stack = look_ahead.split(" ")[2:]
-    breakpoint()
+    
+    syntax_tree_stack.append(stack_top)
+    if countNonTerminals(symbols_to_stack) > 0:
+        syntax_tree_stack.append((symbols_to_stack.copy(), False))
+    else:
+        syntax_tree_stack.append(symbols_to_stack.copy())
+
     while(len(symbols_to_stack) > 0):
         popped = symbols_to_stack.pop()
         stack.append(popped)
@@ -96,6 +111,7 @@ while flag:
     pass
 
 pass
+print(syntax_tree_stack)
 # stack_top = stack.pop()
 # while stack_top == curr_token_type:
 #     curr_token = tokens.pop(0)
