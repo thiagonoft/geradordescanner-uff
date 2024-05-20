@@ -1,16 +1,20 @@
 import json
+import build_syntax_tree_v2
 
 class Tree:
     def __init__(self, data):
         self.children = None
         self.data = data
 
-def countNonTerminals(list):
-    count = 0
-    for element in list:
-        if str(element)[0] == '<':
-            count += 1
-    return count
+def isNonTerminal(element_str):
+    return element_str[0] == '<'
+
+# def countNonTerminals(list):
+#     count = 0
+#     for element in list:
+#         if str(element)[0] == '<':
+#             count += 1
+#     return count
 
 with open('parsing_table.json') as json_file:
     PARSING_TABLE = json.load(json_file)
@@ -66,6 +70,7 @@ else:
     curr_token_type = token_without_annotation
 
 syntax_tree_stack = []
+syntax_tree_stack_2 = []
 
 flag = True
 while flag:
@@ -94,13 +99,23 @@ while flag:
     else:
         look_ahead = look_ahead[0]
 
-    symbols_to_stack = look_ahead.split(" ")[2:]
     
-    syntax_tree_stack.append(stack_top)
-    if countNonTerminals(symbols_to_stack) > 0:
-        syntax_tree_stack.append((symbols_to_stack.copy(), False))
-    else:
-        syntax_tree_stack.append(symbols_to_stack.copy())
+    symbols_to_stack = look_ahead.split(" ")[2:]
+    # print(look_ahead)
+
+    parent_node = Tree(look_ahead.split(" ")[0])
+    child_nodes = symbols_to_stack.copy()
+    parent_node.children = child_nodes
+            
+
+    syntax_tree_stack.append(parent_node)
+
+    # syntax_tree_stack.append(stack_top)
+    # print(look_ahead)
+    # if countNonTerminals(symbols_to_stack) > 0:
+    #     syntax_tree_stack.append((symbols_to_stack.copy(), False))
+    # else:
+    #     syntax_tree_stack.append(symbols_to_stack.copy())
 
     while(len(symbols_to_stack) > 0):
         popped = symbols_to_stack.pop()
@@ -111,7 +126,9 @@ while flag:
     pass
 
 pass
-print(syntax_tree_stack)
+# print(syntax_tree_stack)
+o = build_syntax_tree_v2.build_syntax_tree(syntax_tree_stack)
+print(o)
 # stack_top = stack.pop()
 # while stack_top == curr_token_type:
 #     curr_token = tokens.pop(0)

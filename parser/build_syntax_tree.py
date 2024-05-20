@@ -1,54 +1,55 @@
-from PrettyPrint import PrettyPrintTree
-
 class Tree:
     def __init__(self, data):
         self.children = None
         self.data = data
 
+def isNonTerminal(element_str):
+    return element_str[0] == '<'
+
 def countNonTerminals(list):
     count = 0
     for element in list:
-        if str(element)[0] == '<':
+        if isNonTerminal(str(element)):
             count += 1
     return count
 
 syntax_tree_stack = [
     "<Lines>",
-    (["Integer", "<Statements>", "NewLine"], False),
+    [["Integer", "<Statements>", "NewLine"], False],
     "<Statements>",
-    (["<Statement>"], False),
+    [["<Statement>"], False],
     "<Statement>",
-    (["IF", "<Expression>", "THEN", "<Statement>"], False),
+    [["IF", "<Expression>", "THEN", "<Statement>"], False],
     "<Expression>",
-    (["<AndExp>"], False),
+    [["<AndExp>"], False],
     "<AndExp>",
-    (["<NotExp>"], False),
+    [["<NotExp>"], False],
     "<NotExp>",
-    (["<CompareExp>"], False),
+    [["<CompareExp>"], False],
     "<CompareExp>",
-    (["<AddExp>", "=", "<CompareExp>"], False),
+    [["<AddExp>", "=", "<CompareExp>"], False],
     "<AddExp>",
-    (["<MultExp>"], False),
+    [["<MultExp>"], False],
     "<MultExp>",
-    (["<NegateExp>"], False),
+    [["<NegateExp>"], False],
     "<NegateExp>",
-    (["<PowerExp>"], False),
+    [["<PowerExp>"], False],
     "<PowerExp>",
-    (["<Value>"], False),
+    [["<Value>"], False],
     "<Value>",
     ["ID"],
     "<CompareExp>",
-    (["<AddExp>"], False),
+    [["<AddExp>"], False],
     "<AddExp>",
-    (["<MultExp>"], False),
+    [["<MultExp>"], False],
     "<MultExp>",
-    (["<NegateExp>"], False),
+    [["<NegateExp>"], False],
     "<NegateExp>",
-    (["<PowerExp>"], False),
+    [["<PowerExp>"], False],
     "<PowerExp>",
-    (["<Value>"], False),
+    [["<Value>"], False],
     "<Value>",
-    (["<Constant>"], False),
+    [["<Constant>"], False],
     "<Constant>",
     ["Integer"],
     "<Statement>",
@@ -69,7 +70,7 @@ while True:
     print("parent", parent)
 
     n = 0
-    if type(child) is list:
+    if type(child[0]) is not list:
         n = countNonTerminals(child)
     else:
         n = countNonTerminals(child[0])
@@ -80,6 +81,23 @@ while True:
         parent_node = Tree(parent)
         parent_node.children = child_node
         pending_nodes.append(parent_node)
+    elif n == 1:
+        # syntax_tree_stack[index][1] = True
+        child_node = pending_nodes.pop()
+        parent_node = Tree(parent)
+        parent_node.children = child_node
+        pending_nodes.append(parent_node)
+    elif n == 2:
+        parent_node = Tree(parent)
+        parent_node.children = []
+        for c in child[0]:
+            if isNonTerminal(c):
+                child_node = pending_nodes.pop()
+                parent_node.children.append(child_node)
+            else:
+                parent_node.children.append(c)
+        pass
+        pass
 
     # if len(child[0]) > 0:
     #     node = Tree(child[0].copy())
