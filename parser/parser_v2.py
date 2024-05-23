@@ -49,17 +49,12 @@ def initParsingTableCopyWithBooleans(pt):
     
     return result_pt
 
-# def decideIndexOfRuleToApply(line, col, pt_bools):
-#     for i, isMarked in enumerate(pt_bools[line][col]):
-#         if not isMarked:
-#             return i
-#     raise Exception("Todas as regras possiveis foram marcadas!!")
-
-# SÓ PRA TESTE
 def decideIndexOfRuleToApply(line, col, pt_bools):
     for i, isMarked in enumerate(pt_bools[line][col]):
         if not isMarked:
+            # SÓ PRA TESTE
             return len(pt_bools[line][col]) - i - 1
+            # return i
     raise Exception("Todas as regras possiveis foram marcadas!!")
 
 with open('parsing_table.json') as json_file:
@@ -96,7 +91,7 @@ test_tokens_invalid = """('IF', 'IF')
 ('RETURN', 'RETURN')
 ('NEWLINE', 'NEWLINE')"""
 
-for line in test_tokens_invalid.split("\n"):
+for line in test_tokens_valid.split("\n"):
     tokens.append(eval(line))
 tokens.append("($, $)")
 
@@ -134,8 +129,11 @@ curr_token = convertToken(curr_token_annotated)
 
 while len(stack) > 0:
     if isNonTerminal(stack_top):
+        if not curr_token in PARSING_TABLE[stack_top]:
+            raise Exception("COLUNA vazia na tabela de parsing ! Erro de sintaxe!!!")
+            #TODO: backtrack aqui (para o caso de teste atual, a primeira regra <CompareExp> não
+            # pode virar '<AddExp>' e sim tem que virar '<AddExp> = <CompareExp>'
         rules_to_apply = PARSING_TABLE[stack_top][curr_token]
-        # TODO: implementar back-tracking aqui
         if len(rules_to_apply) > 1:
             line = str(stack_top)
             col = str(curr_token)
@@ -145,11 +143,13 @@ while len(stack) > 0:
             
             index = decideIndexOfRuleToApply(line, col, pt_bools)
             rule_to_apply = PARSING_TABLE[line][col][index]
+            print(rule_to_apply)
             # rule_to_apply = ADHOC_DECISION_MAPPING_DICT[line + col]
         elif len(rules_to_apply) == 1:
             rule_to_apply = rules_to_apply[0]
         else:
-            raise Exception("Erro!!!")
+            raise Exception("LINHA vazia na tabela de parsing ! Erro de sintaxe!!!")
+            # TODO: backtrack
         
         right_hand_side = rule_to_apply.split()[2:]
         
