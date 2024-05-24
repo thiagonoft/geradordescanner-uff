@@ -102,15 +102,22 @@ def markDecisionPoint(dp: DecisionPoint):
 def backtrack():
     last_point: DecisionPoint = decision_points[-1]
     print(f"Backtracking on decision {last_point.DEBUG_RULE_TO_APPLY}...")
+    markDecisionPoint(last_point)
+    #TODO: tratar qnd tiver 0 possibilidades (regra nao é mais vivel)
+    if all(f == True for f in last_point.already_tried):
+        decision_points.pop()
+        last_point = decision_points[-1]
+        print("POP!")
+        # backtrack()
+    
     l = last_point.marked_line
     c = last_point.marked_col
     prev = PARSING_TABLE[l][c]
-    markDecisionPoint(last_point)
-    #TODO: tratar qnd tiver 0 possibilidades (regra nao é mais vivel)
     print("Remaining possibilities:")
     for i, isMarked in enumerate(last_point.already_tried):
         if not isMarked:
             print("    ", prev[i])
+    
     global tokens
     tokens = last_point.curr_tokens
     global stack
@@ -179,6 +186,8 @@ while len(stack) > 0:
         if not curr_token in PARSING_TABLE[stack_top]:
             #TODO: backtrack aqui (para o caso de teste atual, a primeira regra <CompareExp> não
             # pode virar '<AddExp>' e sim tem que virar '<AddExp> = <CompareExp>'
+
+            # acho que ta dando problema no backtracking com o curr_token e stack_top
             backtrack()
             continue
             # break
