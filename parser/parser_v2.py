@@ -1,6 +1,7 @@
 import json
 import copy
 import re
+import build_syntax_tree_v2
 # import resource
 
 class DecisionPoint:
@@ -57,15 +58,7 @@ def initParsingTableCopyWithBooleans(pt):
     
     return result_pt
 
-def decideIndexOfRuleToApply(line, col):#, pt_bools):
-    # if DEBUG_IS_INDEX_REVERSED:
-    #     for i, isMarked in enumerate(reversed(pt_bools[line][col])):
-    #         if not isMarked:
-    #             return len(pt_bools[line][col]) - i - 1
-    # else:
-    #     for i, isMarked in enumerate(pt_bools[line][col]):
-    #         if not isMarked:
-    #             return i
+def decideIndexOfRuleToApply(line, col):
     if len(decision_points) == 0:
         return len(PARSING_TABLE[line][col]) - 1
     
@@ -103,6 +96,8 @@ def markDecisionPoint(dp: DecisionPoint):
 
 def backtrack():
     global decision_points
+    if len(decision_points) == 0:
+        raise Exception(f"Não há pontos para fazer backtracking. Erro de sintaxe no token {curr_token_annotated}. A entrada é inválida.")
     last_point: DecisionPoint = decision_points[-1]
     print(f"Backtracking on decision {last_point.DEBUG_RULE_TO_APPLY}...")
     marked = markDecisionPoint(last_point)
@@ -181,6 +176,17 @@ test_tokens_valid_2 = """('10', 'NUMBER')
 (')', ')')
 ('NEWLINE', 'NEWLINE')"""
 
+test_tokens_valid_3 = """('10', 'NUMBER')
+('READ', 'READ')
+('A1', 'ID')
+(',', ',')
+('A2', 'ID')
+(',', ',')
+('A3', 'ID')
+(',', ',')
+('A4', 'ID')
+('NEWLINE', 'NEWLINE')"""
+
 test_tokens_invalid = """('IF', 'IF')
 ('N', 'ID')
 ('=', 'RELATIONAL_OPERATOR')
@@ -189,7 +195,7 @@ test_tokens_invalid = """('IF', 'IF')
 ('RETURN', 'RETURN')
 ('NEWLINE', 'NEWLINE')"""
 
-for line in test_tokens_valid.split("\n"):
+for line in test_tokens_valid_2.split("\n"):
     tokens.append(eval(line))
 tokens.append("($, $)")
 
@@ -248,6 +254,7 @@ while len(stack) > 0:
                 decision_points.append(new_dp)
         elif len(rules_to_apply) == 1:
             rule_to_apply = rules_to_apply[0]
+            print(rule_to_apply)
         else:
             backtrack()
             continue
@@ -262,7 +269,12 @@ while len(stack) > 0:
         stack_top = stack[-1]
     else:
         if stack_top == '$':
-            break
+            if len(tokens) > 0:
+                backtrack()
+                continue
+            else:
+                print("OK! Entrada aceita.")
+                break
         stack.pop()
         stack_top = stack[-1]
 

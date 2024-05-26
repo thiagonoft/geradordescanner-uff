@@ -439,24 +439,18 @@ def main():
     }
 
     basic_code = """
-10 REM Cálculo de fatorial usando recursão
-20 INPUT "Digite um número: ", N
-30 PRINT "O fatorial de "; N; " é "; FACT(N)
-40 END
-50 DEF FNFACT(N)
-60 IF N = 0 THEN RETURN 1
-70 RETURN N * FNFACT(N - 1)
+10 READ A1, A2, A3, A4
     """
 
     # remove os acentos antes de jogar na funcao preprocess_string
     preprocessed_code = preprocess_string(''.join(ch for ch in unicodedata.normalize('NFKD', basic_code) if not unicodedata.combining(ch)))
     # print(f"código preprocessado: {preprocessed_code}")
     tokens = tokenize(regexes, preprocessed_code)
-    f = open("parser/tokens_input.txt", "w+")
+    # f = open("parser/tokens_input.txt", "w+")
     for token in tokens:
-        # print(token)
-        f.write(str(token) + '\n')
-    f.close()
+        print(token)
+    #     f.write(str(token) + '\n')
+    # f.close()
 
 if __name__ == "__main__":
     main()
