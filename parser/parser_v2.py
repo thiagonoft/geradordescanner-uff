@@ -1,5 +1,4 @@
 import json
-import copy
 import re
 import build_syntax_tree_v2
 # import resource
@@ -19,19 +18,6 @@ class DecisionPoint:
     self.marked_col = marked_col
     self.already_tried = [False]*numOfRulesToApply
     self.DEBUG_RULE_TO_APPLY = DEBUG_RULE_TO_APPLY
-    
-    # mudar pra 'already_tried'
-    # self.curr_pt_bools = copy.deepcopy(curr_pt_bools)
-    
-    # flag = False
-    # for i, isMarked in enumerate(self.curr_pt_bools[line][col]):
-    #     if not isMarked:
-    #         self.curr_pt_bools[line][col][i] = True
-    #         flag = True
-    #         break
-    # if not flag:
-    #     raise Exception("TODOS MARCADOS!!!")
-    #TODO: desmarcar qnd for outra regra
 
 
 def isNonTerminal(element_str):
@@ -43,20 +29,10 @@ def convertToken(curr_token_annotated):
     token_without_annotation = curr_token_annotated[1] # second element of the token
     if token_without_annotation in TYPE_MAPPING_DICT:
         return TYPE_MAPPING_DICT[token_without_annotation]
+    elif token_without_annotation[0] in "+-*/^=<><=>=<>(),>:;":
+        return curr_token_annotated[0]
     else:
-        return token_without_annotation
-
-def initParsingTableCopyWithBooleans(pt):
-    result_pt = {}
-    for line in pt:
-        for col in pt[line]:
-            n = len(pt[line][col])
-            if n > 1:
-                if not line in result_pt:
-                    result_pt[line] = {}
-                result_pt[line][col] = [False]*n
-    
-    return result_pt
+        return curr_token_annotated[1]
 
 def decideIndexOfRuleToApply(line, col):
     if len(decision_points) == 0:
@@ -101,7 +77,7 @@ def backtrack():
     last_point: DecisionPoint = decision_points[-1]
     print(f"Backtracking on decision {last_point.DEBUG_RULE_TO_APPLY}...")
     marked = markDecisionPoint(last_point)
-    #TODO: tratar qnd tiver 0 possibilidades (regra nao é mais vivel)
+    
     c = last_point.already_tried.count(False)
     if marked and c == 0:
         decision_points.pop()
@@ -161,7 +137,7 @@ tokens = []
 # FOR TESTING ONLY
 test_tokens_valid = """('60', 'NUMBER')
 ('IF', 'IF')
-('N', 'ID')
+('N', 'IDENTIFIER')
 ('=', 'RELATIONAL_OPERATOR')
 ('0', 'NUMBER')
 ('THEN', 'THEN')
@@ -185,6 +161,16 @@ test_tokens_valid_3 = """('10', 'NUMBER')
 ('A3', 'ID')
 (',', ',')
 ('A4', 'ID')
+('NEWLINE', 'NEWLINE')
+('20', 'NUMBER')
+('READ', 'READ')
+('A5', 'ID')
+(',', ',')
+('A6', 'ID')
+(',', ',')
+('A7', 'ID')
+(',', ',')
+('A8', 'ID')
 ('NEWLINE', 'NEWLINE')"""
 
 test_tokens_invalid = """('IF', 'IF')
@@ -195,7 +181,7 @@ test_tokens_invalid = """('IF', 'IF')
 ('RETURN', 'RETURN')
 ('NEWLINE', 'NEWLINE')"""
 
-for line in test_tokens_valid_2.split("\n"):
+for line in test_tokens_invalid.split("\n"):
     tokens.append(eval(line))
 tokens.append("($, $)")
 
@@ -205,6 +191,7 @@ tokens.append("($, $)")
 TYPE_MAPPING_DICT = {
     "NUMBER": "Integer",
     "RELATIONAL_OPERATOR": "=",
+    "IDENTIFIER":"ID",
 }
 
 DEBUG_IS_INDEX_REVERSED = True
@@ -212,7 +199,6 @@ JUST_BACKTRACKED = False
 ALLOW_JUST_BACKTRACKED = False
 
 decision_points: list[DecisionPoint] = []
-# pt_bools = initParsingTableCopyWithBooleans(PARSING_TABLE)
 
 stack = ['$', "<Lines>"]
 stack_top = stack[-1]
