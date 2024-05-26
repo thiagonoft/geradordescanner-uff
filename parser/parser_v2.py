@@ -1,5 +1,6 @@
 import json
 import copy
+import re
 # import resource
 
 class DecisionPoint:
@@ -33,7 +34,9 @@ class DecisionPoint:
 
 
 def isNonTerminal(element_str):
-    return element_str[0] == '<'
+    pattern = "<(.+)>"
+    return True if re.match(pattern, element_str) else False
+    # return element_str[0] == '<'
 
 def convertToken(curr_token_annotated):
     token_without_annotation = curr_token_annotated[1] # second element of the token
@@ -67,8 +70,7 @@ def decideIndexOfRuleToApply(line, col):#, pt_bools):
         return len(PARSING_TABLE[line][col]) - 1
     
     lp = decision_points[-1]
-    just_backtracked = (stack == lp.curr_stack) and (tokens == lp.curr_tokens)
-    if just_backtracked:
+    if JUST_BACKTRACKED:
         if DEBUG_IS_INDEX_REVERSED:
             i = getLastFalseIndex(lp.already_tried)
             return i
@@ -133,6 +135,12 @@ def backtrack():
 
     global curr_token
     curr_token = last_point.marked_col
+
+    global JUST_BACKTRACKED
+    JUST_BACKTRACKED = True
+
+    global ALLOW_JUST_BACKTRACKED
+    ALLOW_JUST_BACKTRACKED = True
     
 def getLastFalseIndex(l: list[bool]):
     for i, e in enumerate(reversed(l)):
@@ -194,6 +202,8 @@ TYPE_MAPPING_DICT = {
 }
 
 DEBUG_IS_INDEX_REVERSED = True
+JUST_BACKTRACKED = False
+ALLOW_JUST_BACKTRACKED = False
 
 decision_points: list[DecisionPoint] = []
 # pt_bools = initParsingTableCopyWithBooleans(PARSING_TABLE)
@@ -204,6 +214,12 @@ curr_token_annotated = tokens.pop(0)
 curr_token = convertToken(curr_token_annotated)
 
 while len(stack) > 0:
+    if JUST_BACKTRACKED:
+        if ALLOW_JUST_BACKTRACKED:
+            ALLOW_JUST_BACKTRACKED = False
+        else:
+            JUST_BACKTRACKED = False
+    
     if isNonTerminal(stack_top):
         if not curr_token in PARSING_TABLE[stack_top]:
             #TODO: backtrack aqui (para o caso de teste atual, a primeira regra <CompareExp> não
@@ -227,7 +243,7 @@ while len(stack) > 0:
             rule_to_apply = PARSING_TABLE[line][col][index]
             print(rule_to_apply)
             
-            if not justBacktracked():
+            if not JUST_BACKTRACKED:
                 new_dp = DecisionPoint(stack, tokens, line, col, len(rules_to_apply), rule_to_apply)
                 decision_points.append(new_dp)
         elif len(rules_to_apply) == 1:
@@ -249,6 +265,10 @@ while len(stack) > 0:
             break
         stack.pop()
         stack_top = stack[-1]
+
+        if len(tokens) == 0:
+            backtrack()
+            continue
         curr_token_annotated = tokens.pop(0)
         curr_token = convertToken(curr_token_annotated)
 pass
