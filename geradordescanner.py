@@ -374,7 +374,7 @@ def preprocess_string(basic_code):
         processed_line = ' '.join(new_line.split())
         processed_lines.append(processed_line)
 
-    return '\n'.join(processed_lines)
+    return ' \\n '.join(processed_lines)
 
 def main():
     regexes = {
@@ -425,6 +425,7 @@ def main():
         "[A][N][D]": "AND",
         "[N][O][T]": "NOT",
         "[O][R]": "OR",
+        '[\][n]': "NEWLINE",
         "[A_z]([0_z])*": "IDENTIFIER",
         "[A_z]([0_z])*([$])*": "STRING IDENTIFIER",
         "[+-*/^]": "ARITHMETIC_OPERATOR",
