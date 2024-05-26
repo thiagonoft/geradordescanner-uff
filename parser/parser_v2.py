@@ -1,6 +1,6 @@
 import json
 import re
-import build_syntax_tree_v2
+import copy
 # import resource
 
 class DecisionPoint:
@@ -19,11 +19,36 @@ class DecisionPoint:
     self.already_tried = [False]*numOfRulesToApply
     self.DEBUG_RULE_TO_APPLY = DEBUG_RULE_TO_APPLY
 
+class Tree():
+    def __init__(self, data, children = None):
+        self.children = children
+        self.data = data
+
+def computeNode(node: Tree, lines: list[str]):
+    line = lines.pop(0)
+    lhs = line.split()[0]
+    rhs = line.split()[2:]
+    
+    node.data = lhs
+    node.children = []
+    for c in rhs:
+        if isNonTerminal(c):
+            node.children.append(computeNode(Tree(c), lines))
+        else:
+            node.children.append(c)
+    return node
+
+def printTree(root: Tree, level=0):
+    print("--" * level, root.data)
+    for child in root.children:
+        if type(child) is Tree:
+            printTree(child, level + 1)
+        else:
+            print("--" * (level + 1), child)
 
 def isNonTerminal(element_str):
     pattern = "<(.+)>"
     return True if re.match(pattern, element_str) else False
-    # return element_str[0] == '<'
 
 def convertToken(curr_token_annotated):
     token_without_annotation = curr_token_annotated[1] # second element of the token
@@ -75,24 +100,24 @@ def backtrack():
     if len(decision_points) == 0:
         raise Exception(f"Não há pontos para fazer backtracking. Erro de sintaxe no token {curr_token_annotated}. A entrada é inválida.")
     last_point: DecisionPoint = decision_points[-1]
-    print(f"Backtracking on decision {last_point.DEBUG_RULE_TO_APPLY}...")
+    # print(f"Backtracking on decision {last_point.DEBUG_RULE_TO_APPLY}...")
     marked = markDecisionPoint(last_point)
     
     c = last_point.already_tried.count(False)
     if marked and c == 0:
         decision_points.pop()
         last_point = decision_points[-1]
-        print("POP!")
+        # print("POP!")
         backtrack()
         return
     
-    l = last_point.marked_line
-    c = last_point.marked_col
-    prev = PARSING_TABLE[l][c]
-    print("Remaining possibilities:")
-    for i, isMarked in enumerate(last_point.already_tried):
-        if not isMarked:
-            print("    ", prev[i])
+    # l = last_point.marked_line
+    # c = last_point.marked_col
+    # prev = PARSING_TABLE[l][c]
+    # print("Remaining possibilities:")
+    # for i, isMarked in enumerate(last_point.already_tried):
+    #     if not isMarked:
+            # print("    ", prev[i])
     
     global stack
     stack = last_point.curr_stack
@@ -100,7 +125,6 @@ def backtrack():
     global tokens
     tokens = last_point.curr_tokens
 
-    # TODO: verificar se nao tem que mudar algo mais assim que tem backtracking
     global stack_top
     stack_top = last_point.marked_line
 
@@ -128,6 +152,75 @@ def justBacktracked():
     global tokens
     return (stack == lp.curr_stack) and (tokens == lp.curr_tokens)
     
+def buildSyntaxTree():
+    print("-------build syntax tree-----------------------")
+    new_tokens = ORIGINAL_TOKENS
+    new_stack = ['$', "<Lines>"]
+    new_stack_top = new_stack[-1]
+    new_curr_token_annotated = new_tokens.pop(0)
+    new_curr_token = convertToken(new_curr_token_annotated)
+    syntax_tree_stack = []
+
+    while len(new_stack) > 0:
+        if isNonTerminal(new_stack_top):
+            rules_to_apply = PARSING_TABLE[new_stack_top][new_curr_token]
+            if len(rules_to_apply) > 1:
+                consumedDecisionPoint = decision_points.pop(0) # talvez seja bom fzr copia
+                
+                dp_line = consumedDecisionPoint.marked_line
+                dp_col = consumedDecisionPoint.marked_col
+                dp_index = getLastFalseIndex(consumedDecisionPoint.already_tried)
+                rule_to_apply = PARSING_TABLE[dp_line][dp_col][dp_index]
+                # print(rule_to_apply)
+                # syntax_tree_stack.append(rule_to_apply)
+                print(f"new_curr_token_annotated {new_curr_token_annotated} new_stack_top {new_stack_top}")
+                # syntax_element = f"{new_curr_token_annotated[0]}"
+                syntax_tree_stack.append(rule_to_apply)
+            elif len(rules_to_apply) == 1:
+                rule_to_apply = rules_to_apply[0]
+                # print(rule_to_apply)
+                # syntax_tree_stack.append(rule_to_apply)
+                print(f"new_curr_token_annotated {new_curr_token_annotated} new_stack_top {new_stack_top}")
+                syntax_tree_stack.append(rule_to_apply)
+            else:
+                # backtrack()
+                # continue
+                # raise Exception("LINHA vazia na tabela de parsing ! Erro de sintaxe!!!")
+                raise Exception("???")
+            
+            right_hand_side = rule_to_apply.split()[2:]
+            
+            new_stack.pop()
+            for s in reversed(right_hand_side):
+                new_stack.append(s)
+            new_stack_top = new_stack[-1]
+        else:
+            if new_stack_top == '$':
+                if len(new_tokens) > 0:
+                    # backtrack()
+                    raise Exception("???")
+                    # continue
+                else:
+                    # print("OK! Entrada aceita.")
+                    break
+            new_stack.pop()
+            new_stack_top = new_stack[-1]
+
+            if len(new_tokens) == 0:
+                # backtrack()
+                raise Exception("???")
+                # continue
+            new_curr_token_annotated = new_tokens.pop(0)
+            new_curr_token = convertToken(new_curr_token_annotated)
+    node = computeNode(Tree(""), syntax_tree_stack)
+    printTree(node)
+    # for d in decision_points:
+    #     index = getLastFalseIndex(d.already_tried)
+    #     l = d.marked_line
+    #     c = d.marked_col
+    #     applied = PARSING_TABLE[l][c][index]
+    # print(applied)
+
 
 tokens = []
 # with open('tokens_input.txt', "r") as file:
@@ -181,16 +274,14 @@ test_tokens_invalid = """('IF', 'IF')
 ('RETURN', 'RETURN')
 ('NEWLINE', 'NEWLINE')"""
 
-for line in test_tokens_invalid.split("\n"):
+for line in test_tokens_valid_3.split("\n"):
     tokens.append(eval(line))
 tokens.append("($, $)")
-
-
+ORIGINAL_TOKENS = copy.deepcopy(tokens)
 
 # TODO: tirar isso e receber direto do gerador de scanner
 TYPE_MAPPING_DICT = {
     "NUMBER": "Integer",
-    "RELATIONAL_OPERATOR": "=",
     "IDENTIFIER":"ID",
 }
 
@@ -214,38 +305,30 @@ while len(stack) > 0:
     
     if isNonTerminal(stack_top):
         if not curr_token in PARSING_TABLE[stack_top]:
-            #TODO: backtrack aqui (para o caso de teste atual, a primeira regra <CompareExp> não
-            # pode virar '<AddExp>' e sim tem que virar '<AddExp> = <CompareExp>'
-
-            # acho que ta dando problema no backtracking com o curr_token e stack_top
             backtrack()
             continue
             # break
             # raise Exception("COLUNA vazia na tabela de parsing ! Erro de sintaxe!!!")
         
         rules_to_apply = PARSING_TABLE[stack_top][curr_token]
-        #TODO: talvez tratar quando mesmo que na tabela de parsing tenha mais de uma entry se
-        # com as restrições tiver só uma nao criar decision point
         if len(rules_to_apply) > 1:
             line = str(stack_top)
             col = str(curr_token)
 
-            # TODO: revisar a função 'decideIndexOfRuleToApply'
             index = decideIndexOfRuleToApply(line, col)
             rule_to_apply = PARSING_TABLE[line][col][index]
-            print(rule_to_apply)
+            # print(rule_to_apply)
             
             if not JUST_BACKTRACKED:
                 new_dp = DecisionPoint(stack, tokens, line, col, len(rules_to_apply), rule_to_apply)
                 decision_points.append(new_dp)
         elif len(rules_to_apply) == 1:
             rule_to_apply = rules_to_apply[0]
-            print(rule_to_apply)
+            # print(rule_to_apply)
         else:
             backtrack()
             continue
             # raise Exception("LINHA vazia na tabela de parsing ! Erro de sintaxe!!!")
-            # TODO: backtrack
         
         right_hand_side = rule_to_apply.split()[2:]
         
@@ -271,6 +354,8 @@ while len(stack) > 0:
         curr_token = convertToken(curr_token_annotated)
 pass
 
+buildSyntaxTree()
+pass
 # testando memoria
 # a = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 # print(a)
