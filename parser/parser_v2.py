@@ -100,15 +100,18 @@ def markDecisionPoint(dp: DecisionPoint):
     #     raise Exception("Falha ao marcar DecisionPoint!! Todas as possibilidades foram marcadas!!")
 
 def backtrack():
+    global decision_points
     last_point: DecisionPoint = decision_points[-1]
     print(f"Backtracking on decision {last_point.DEBUG_RULE_TO_APPLY}...")
-    markDecisionPoint(last_point)
+    marked = markDecisionPoint(last_point)
     #TODO: tratar qnd tiver 0 possibilidades (regra nao é mais vivel)
-    if all(f == True for f in last_point.already_tried):
+    c = last_point.already_tried.count(False)
+    if marked and c == 0:
         decision_points.pop()
         last_point = decision_points[-1]
         print("POP!")
-        # backtrack()
+        backtrack()
+        return
     
     l = last_point.marked_line
     c = last_point.marked_col
@@ -118,15 +121,34 @@ def backtrack():
         if not isMarked:
             print("    ", prev[i])
     
-    global tokens
-    tokens = last_point.curr_tokens
     global stack
     stack = last_point.curr_stack
+    
+    global tokens
+    tokens = last_point.curr_tokens
 
+    # TODO: verificar se nao tem que mudar algo mais assim que tem backtracking
+    global stack_top
+    stack_top = last_point.marked_line
+
+    global curr_token
+    curr_token = last_point.marked_col
+    
 def getLastFalseIndex(l: list[bool]):
     for i, e in enumerate(reversed(l)):
         if e == False:
             return len(l) - i - 1
+
+def justBacktracked():
+    global decision_points
+    if len(decision_points) == 0:
+        return False
+    
+    lp = decision_points[-1]
+    global stack
+    global tokens
+    return (stack == lp.curr_stack) and (tokens == lp.curr_tokens)
+    
 
 tokens = []
 # with open('tokens_input.txt', "r") as file:
@@ -194,6 +216,8 @@ while len(stack) > 0:
             # raise Exception("COLUNA vazia na tabela de parsing ! Erro de sintaxe!!!")
         
         rules_to_apply = PARSING_TABLE[stack_top][curr_token]
+        #TODO: talvez tratar quando mesmo que na tabela de parsing tenha mais de uma entry se
+        # com as restrições tiver só uma nao criar decision point
         if len(rules_to_apply) > 1:
             line = str(stack_top)
             col = str(curr_token)
@@ -203,13 +227,15 @@ while len(stack) > 0:
             rule_to_apply = PARSING_TABLE[line][col][index]
             print(rule_to_apply)
             
-            new_dp = DecisionPoint(stack, tokens, line, col, len(rules_to_apply), rule_to_apply)
-            decision_points.append(new_dp)
-            # rule_to_apply = ADHOC_DECISION_MAPPING_DICT[line + col]
+            if not justBacktracked():
+                new_dp = DecisionPoint(stack, tokens, line, col, len(rules_to_apply), rule_to_apply)
+                decision_points.append(new_dp)
         elif len(rules_to_apply) == 1:
             rule_to_apply = rules_to_apply[0]
         else:
-            raise Exception("LINHA vazia na tabela de parsing ! Erro de sintaxe!!!")
+            backtrack()
+            continue
+            # raise Exception("LINHA vazia na tabela de parsing ! Erro de sintaxe!!!")
             # TODO: backtrack
         
         right_hand_side = rule_to_apply.split()[2:]
