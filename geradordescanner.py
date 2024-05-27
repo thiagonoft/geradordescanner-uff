@@ -439,22 +439,22 @@ def main():
         '["]([ _~])*["]': "STRING"
     }
 
-    basic_code = """
-10 REM Cálculo de fatorial usando recursão
-20 INPUT "Digite um número: ", N
-30 PRINT "O fatorial de "; N; " é "; FACT(N)
-40 END
-50 DEF FNFACT(N)
-60 IF N = 0 THEN RETURN 1
-70 RETURN N * FNFACT(N - 1)
-    """
-
+    basic_code = ""
+    with open('tests/testDefault_scanner.in', "r") as file:
+        for line in file:
+            basic_code += line
     # remove os acentos antes de jogar na funcao preprocess_string
     preprocessed_code = preprocess_string(''.join(ch for ch in unicodedata.normalize('NFKD', basic_code) if not unicodedata.combining(ch)))
-    print(f"código preprocessado: {preprocessed_code}")
+    # print(f"código preprocessado: {preprocessed_code}")
     tokens = tokenize(regexes, preprocessed_code)
+    # for token in tokens:
+    #     print(token)
+        
+    f = open("tests/testDefault_parser.in", "w+")
     for token in tokens:
-        print(token)
-
+        # print(token)
+        f.write(str(token) + '\n')
+    f.write("('\\n', 'NEWLINE')\n")
+    f.close()
 if __name__ == "__main__":
     main()

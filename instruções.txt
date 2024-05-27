@@ -1,0 +1,13 @@
+A entrada do gerador de scanner deve ser colocada
+no arquivo '/tests/testDefault_scanner.in'
+
+Para executar o gerador de scanner, deve usar a versão 3.12
+do Python. O comando para executar é:
+python3.12 geradordescanner.py
+
+A saída será um arquivo na pasta '/tests' chamado
+'testDefault_parser.in'
+
+Para executar o parser, deve usar a versão 3.12 do Python.
+O comando para executar é:
+python3.12 parser_v2.py
