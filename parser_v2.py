@@ -71,7 +71,7 @@ def decideIndexOfRuleToApply(line, col):
         return len(PARSING_TABLE[line][col]) - 1
     # raise Exception("Todas as regras possiveis foram marcadas!!")
 
-with open('parsing_table.json') as json_file:
+with open('parser/parsing_table.json') as json_file:
     PARSING_TABLE = json.load(json_file)
 
 def markDecisionPoint(dp: DecisionPoint):
@@ -225,63 +225,13 @@ def buildSyntaxTree():
 
 
 tokens = []
-# with open('tokens_input.txt', "r") as file:
-#     for line in file:
-#         tokens.append(eval(line[:-1])) # removes \n
+with open('parser.in', "r") as file:
+    for line in file:
+        tokens.append(eval(line[:-1])) # removes \n
 
-# FOR TESTING ONLY
-test_tokens_valid = """('60', 'NUMBER')
-('IF', 'IF')
-('N', 'IDENTIFIER')
-('=', 'RELATIONAL_OPERATOR')
-('0', 'NUMBER')
-('THEN', 'THEN')
-('RETURN', 'RETURN')
-('NEWLINE', 'NEWLINE')"""
-
-test_tokens_valid_2 = """('10', 'NUMBER')
-('DIM', 'DIM')
-('N', 'ID')
-('(', '(')
-('25', 'NUMBER')
-(')', ')')
-('NEWLINE', 'NEWLINE')"""
-
-test_tokens_valid_3 = """('10', 'NUMBER')
-('READ', 'READ')
-('A1', 'ID')
-(',', ',')
-('A2', 'ID')
-(',', ',')
-('A3', 'ID')
-(',', ',')
-('A4', 'ID')
-('NEWLINE', 'NEWLINE')
-('20', 'NUMBER')
-('READ', 'READ')
-('A5', 'ID')
-(',', ',')
-('A6', 'ID')
-(',', ',')
-('A7', 'ID')
-(',', ',')
-('A8', 'ID')
-('NEWLINE', 'NEWLINE')"""
-
-test_tokens_invalid = """('IF', 'IF')
-('N', 'ID')
-('=', 'RELATIONAL_OPERATOR')
-('0', 'NUMBER')
-('THEN', 'THEN')
-('RETURN', 'RETURN')
-('NEWLINE', 'NEWLINE')"""
-
-for line in test_tokens_valid_3.split("\n"):
-    tokens.append(eval(line))
 tokens.append("($, $)")
 ORIGINAL_TOKENS = tokens.copy()
 
-# TODO: tirar isso e receber direto do gerador de scanner
 TYPE_MAPPING_DICT = {
     "NUMBER": "Integer",
     "IDENTIFIER":"ID",
@@ -358,6 +308,3 @@ pass
 
 buildSyntaxTree()
 pass
-# testando memoria
-# a = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-# print(a)

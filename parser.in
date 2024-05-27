@@ -1,0 +1,8 @@
+('10', 'NUMBER')
+('IF', 'IF')
+('N', 'IDENTIFIER')
+('=', 'RELATIONAL_OPERATOR')
+('0', 'NUMBER')
+('THEN', 'THEN')
+('RETURN', 'RETURN')
+('\n', 'NEWLINE')
