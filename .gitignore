@@ -1,1 +1,3 @@
 /printNFA.py
+.vscode
+/parser/__pycache__

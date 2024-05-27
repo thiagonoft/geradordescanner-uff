@@ -1,0 +1,51 @@
+## Se a tabela M[A, a] for possivel de ser feita sem conflito, entao é LL(1)
+
+::::FIRST::::
+FIRST(<Statement>) = ['READ', 'OPEN', 'Remark', 'RESTORE', 'LET', 'DATA', 'STOP', 'RUN', 'INPUT', 'RETURN', 'NEXT', 'WAIT', 'GOTO', 'DIM', 'SYS', 'CLOSE', 'IF', 'FOR', 'END', 'PRINT', 'POKE', 'GOSUB']
+FIRST(<CompareExp>) = ['ID', 'Real', "'-'", "'('", 'Integer', 'String']
+FIRST(<IntegerList>) = ['Integer']
+FIRST(<AndExp>) = ['ID', 'Real', "'-'", "'('", 'Integer', 'NOT', 'String']
+FIRST(<Lines>) = ['Integer']
+FIRST(<Access>) = ['INPUT', 'OUTPUT']
+FIRST(<ValueList>) = ['ID', 'Real', "'('", 'Integer', 'String']
+FIRST(<PowerExp'>) = ["'^'"]
+FIRST(<Statements>) = ['READ', 'OPEN', 'Remark', 'RESTORE', 'LET', 'DATA', 'STOP', 'RUN', 'INPUT', 'RETURN', 'NEXT', 'WAIT', 'GOTO', 'DIM', 'SYS', 'CLOSE', 'IF', 'FOR', 'END', 'PRINT', 'POKE', 'GOSUB']
+FIRST(<ConstantList>) = ['String', 'Integer', 'Real']
+FIRST(<PrintList>) = ['ID', 'Branco', 'Real', "'-'", "'('", 'Integer', 'NOT', 'String']
+FIRST(<ExpressionList>) = ['ID', 'Real', "'-'", "'('", 'Integer', 'NOT', 'String']
+FIRST(<NegateExp>) = ['ID', 'Real', "'-'", "'('", 'Integer', 'String']
+FIRST(<NotExp>) = ['ID', 'Real', "'-'", "'('", 'Integer', 'NOT', 'String']
+FIRST(<PowerExp>) = ['ID', 'Real', "'('", 'Integer', 'String']
+FIRST(<Constant>) = ['String', 'Integer', 'Real']
+FIRST(<IDList>) = ['ID']
+FIRST(<MultExp>) = ['ID', 'Real', "'-'", "'('", 'Integer', 'String']
+FIRST(<Value>) = ['ID', 'Real', "'('", 'Integer', 'String']
+FIRST(<AddExp>) = ['ID', 'Real', "'-'", "'('", 'Integer', 'String']
+FIRST(<Expression>) = ['ID', 'Real', "'-'", "'('", 'Integer', 'NOT', 'String']
+
+
+::::FOLLOW::::
+<Lines> = {$}
+<Statements> = {NewLine}
+<Statement> = {}
+<Access> = {AS}
+<ID List> = {}
+<Value List> = {}
+<Constant List> = {} 
+<Integer List> = {')'}
+<Expression List> = {')'}
+<Print List> = {}
+<Expression> = {TO, STEP, THEN, ')'}
+<And Exp> = {}
+<Not Exp> = {}
+<Compare Exp> = {}
+<Add Exp> = {}
+<Mult Exp> = {}
+<Negate Exp> = {}
+<Power Exp> = {}
+<Power Exp'> = {}
+<Constant> = {}
+<Value> = {FOR}
+
+
+::::LOOK-AHEAD::::
