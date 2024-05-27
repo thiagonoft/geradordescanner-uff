@@ -440,7 +440,7 @@ def main():
     }
 
     basic_code = ""
-    with open('tests/testDefault_scanner.in', "r") as file:
+    with open('scanner.in', "r") as file:
         for line in file:
             basic_code += line
     # remove os acentos antes de jogar na funcao preprocess_string
@@ -450,7 +450,7 @@ def main():
     # for token in tokens:
     #     print(token)
         
-    f = open("tests/testDefault_parser.in", "w+")
+    f = open("parser.in", "w+")
     for token in tokens:
         # print(token)
         f.write(str(token) + '\n')
