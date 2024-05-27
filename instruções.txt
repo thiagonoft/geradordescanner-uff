@@ -11,3 +11,7 @@ A saída será um arquivo na pasta raíz chamado
 Para executar o parser, que usará o arquivo gerado na pasta raíz,
 deve usar a versão 3.12 do Python. O comando para executar é:
 python3.12 parser_v2.py
+
+Os arquivos na pasta '/tests' servem como exemplo de entrada.
+Basta copiar o conteúdo para do teste desejado para o arquivo
+'scanner.in' e exucutar os programas.
