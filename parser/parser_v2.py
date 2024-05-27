@@ -1,13 +1,10 @@
 import json
 import re
-import copy
-# import resource
 
 class DecisionPoint:
   def __init__(self,
         curr_stack: list,
         curr_tokens: list,
-        # curr_pt_bools: dict,
         marked_line: str,
         marked_col: str,
         numOfRulesToApply: int,
@@ -151,10 +148,19 @@ def justBacktracked():
     global stack
     global tokens
     return (stack == lp.curr_stack) and (tokens == lp.curr_tokens)
-    
+
+def substituteTerminals(node: Tree, tokens_to_substitute: list):
+    for i, c in enumerate(node.children):
+        if type(c) is Tree:
+            substituteTerminals(c, tokens_to_substitute)
+        else:
+            tok = tokens_to_substitute.pop(0)
+            node.children[i] = tok[0]
+
 def buildSyntaxTree():
-    print("-------build syntax tree-----------------------")
-    new_tokens = ORIGINAL_TOKENS
+    print("-----Arvore Sintatica-----")
+    new_tokens = ORIGINAL_TOKENS.copy()
+    new_tokens_2 = ORIGINAL_TOKENS.copy()
     new_stack = ['$', "<Lines>"]
     new_stack_top = new_stack[-1]
     new_curr_token_annotated = new_tokens.pop(0)
@@ -173,14 +179,14 @@ def buildSyntaxTree():
                 rule_to_apply = PARSING_TABLE[dp_line][dp_col][dp_index]
                 # print(rule_to_apply)
                 # syntax_tree_stack.append(rule_to_apply)
-                print(f"new_curr_token_annotated {new_curr_token_annotated} new_stack_top {new_stack_top}")
+                # print(f"new_curr_token_annotated {new_curr_token_annotated} new_stack_top {new_stack_top}")
                 # syntax_element = f"{new_curr_token_annotated[0]}"
                 syntax_tree_stack.append(rule_to_apply)
             elif len(rules_to_apply) == 1:
                 rule_to_apply = rules_to_apply[0]
                 # print(rule_to_apply)
                 # syntax_tree_stack.append(rule_to_apply)
-                print(f"new_curr_token_annotated {new_curr_token_annotated} new_stack_top {new_stack_top}")
+                # print(f"new_curr_token_annotated {new_curr_token_annotated} new_stack_top {new_stack_top}")
                 syntax_tree_stack.append(rule_to_apply)
             else:
                 # backtrack()
@@ -210,16 +216,12 @@ def buildSyntaxTree():
                 # backtrack()
                 raise Exception("???")
                 # continue
+            # print(f"new_curr_token_annotated {new_curr_token_annotated} new_stack_top {new_stack_top}")
             new_curr_token_annotated = new_tokens.pop(0)
             new_curr_token = convertToken(new_curr_token_annotated)
     node = computeNode(Tree(""), syntax_tree_stack)
+    substituteTerminals(node, new_tokens_2)
     printTree(node)
-    # for d in decision_points:
-    #     index = getLastFalseIndex(d.already_tried)
-    #     l = d.marked_line
-    #     c = d.marked_col
-    #     applied = PARSING_TABLE[l][c][index]
-    # print(applied)
 
 
 tokens = []
@@ -277,7 +279,7 @@ test_tokens_invalid = """('IF', 'IF')
 for line in test_tokens_valid_3.split("\n"):
     tokens.append(eval(line))
 tokens.append("($, $)")
-ORIGINAL_TOKENS = copy.deepcopy(tokens)
+ORIGINAL_TOKENS = tokens.copy()
 
 # TODO: tirar isso e receber direto do gerador de scanner
 TYPE_MAPPING_DICT = {
