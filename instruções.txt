@@ -1,17 +1,4 @@
-A entrada do gerador de scanner deve ser colocada no arquivo
-'scanner.in'
-
-Para executar o gerador de scanner, deve usar a versão 3.12 do Python.
-O comando para executar é:
-python3.12 geradordescanner.py
-
-A saída será um arquivo na pasta raíz chamado
-'parser.in'
-
-Para executar o parser, que usará o arquivo gerado na pasta raíz,
-deve usar a versão 3.12 do Python. O comando para executar é:
-python3.12 parser_v2.py
-
-Os arquivos na pasta '/tests' servem como exemplo de entrada.
-Basta copiar o conteúdo para do teste desejado para o arquivo
-'scanner.in' e exucutar os programas.
+Para compilar e executar use:
+lex flexbison1-1.l
+gcc lex.yy.c -lfl
+./a.out
