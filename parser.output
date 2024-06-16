@@ -1,0 +1,85 @@
+Grammar
+
+    0 $accept: new_line $end
+
+    1 new_line: %empty
+    2         | new_line line
+
+    3 line: T_NEWLINE
+    4     | T_IDENTIFIER T_NEWLINE
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    error (256)
+    T_IDENTIFIER (258) 4
+    T_NEWLINE (259) 3 4
+
+
+Nonterminals, with rules where they appear
+
+    $accept (5)
+        on left: 0
+    new_line (6)
+        on left: 1 2
+        on right: 0 2
+    line (7)
+        on left: 3 4
+        on right: 2
+
+
+State 0
+
+    0 $accept: . new_line $end
+
+    $default  reduce using rule 1 (new_line)
+
+    new_line  go to state 1
+
+
+State 1
+
+    0 $accept: new_line . $end
+    2 new_line: new_line . line
+
+    $end          shift, and go to state 2
+    T_IDENTIFIER  shift, and go to state 3
+    T_NEWLINE     shift, and go to state 4
+
+    line  go to state 5
+
+
+State 2
+
+    0 $accept: new_line $end .
+
+    $default  accept
+
+
+State 3
+
+    4 line: T_IDENTIFIER . T_NEWLINE
+
+    T_NEWLINE  shift, and go to state 6
+
+
+State 4
+
+    3 line: T_NEWLINE .
+
+    $default  reduce using rule 3 (line)
+
+
+State 5
+
+    2 new_line: new_line line .
+
+    $default  reduce using rule 2 (new_line)
+
+
+State 6
+
+    4 line: T_IDENTIFIER T_NEWLINE .
+
+    $default  reduce using rule 4 (line)
