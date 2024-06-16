@@ -8,8 +8,11 @@
 #include "parser.tab.h"
 
 %}
-/*([0-9a-zA-Z])*/
-%%
-[a-zA-Z] {return T_IDENTIFIER;}
 
+%%
+"quit" {return T_QUIT;}
+
+[0-9]+ {return T_NUMBER;}
+[a-zA-Z]([0-9a-zA-Z])* {return T_IDENTIFIER;}
+\n	        {return T_NEWLINE;}
 %%

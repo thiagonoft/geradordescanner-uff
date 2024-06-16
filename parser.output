@@ -1,85 +1,121 @@
+Terminals unused in grammar
+
+    T_NUMBER
+
+
 Grammar
 
-    0 $accept: new_line $end
+    0 $accept: computation $end
 
-    1 new_line: %empty
-    2         | new_line line
+    1 computation: ε
+    2            | computation line
 
     3 line: T_NEWLINE
-    4     | T_IDENTIFIER T_NEWLINE
+    4     | id T_NEWLINE
+    5     | T_QUIT T_NEWLINE
+
+    6 id: T_IDENTIFIER
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
     error (256)
-    T_IDENTIFIER (258) 4
-    T_NEWLINE (259) 3 4
+    T_IDENTIFIER <TYPE_STRING> (258) 6
+    T_NUMBER <TYPE_INTEGER> (259)
+    T_NEWLINE (260) 3 4 5
+    T_QUIT (261) 5
 
 
 Nonterminals, with rules where they appear
 
-    $accept (5)
+    $accept (7)
         on left: 0
-    new_line (6)
+    computation (8)
         on left: 1 2
         on right: 0 2
-    line (7)
-        on left: 3 4
+    line (9)
+        on left: 3 4 5
         on right: 2
+    id <TYPE_STRING> (10)
+        on left: 6
+        on right: 4
 
 
 State 0
 
-    0 $accept: . new_line $end
+    0 $accept: • computation $end
 
-    $default  reduce using rule 1 (new_line)
+    $default  reduce using rule 1 (computation)
 
-    new_line  go to state 1
+    computation  go to state 1
 
 
 State 1
 
-    0 $accept: new_line . $end
-    2 new_line: new_line . line
+    0 $accept: computation • $end
+    2 computation: computation • line
 
     $end          shift, and go to state 2
     T_IDENTIFIER  shift, and go to state 3
     T_NEWLINE     shift, and go to state 4
+    T_QUIT        shift, and go to state 5
 
-    line  go to state 5
+    line  go to state 6
+    id    go to state 7
 
 
 State 2
 
-    0 $accept: new_line $end .
+    0 $accept: computation $end •
 
     $default  accept
 
 
 State 3
 
-    4 line: T_IDENTIFIER . T_NEWLINE
+    6 id: T_IDENTIFIER •
 
-    T_NEWLINE  shift, and go to state 6
+    $default  reduce using rule 6 (id)
 
 
 State 4
 
-    3 line: T_NEWLINE .
+    3 line: T_NEWLINE •
 
     $default  reduce using rule 3 (line)
 
 
 State 5
 
-    2 new_line: new_line line .
+    5 line: T_QUIT • T_NEWLINE
 
-    $default  reduce using rule 2 (new_line)
+    T_NEWLINE  shift, and go to state 8
 
 
 State 6
 
-    4 line: T_IDENTIFIER T_NEWLINE .
+    2 computation: computation line •
+
+    $default  reduce using rule 2 (computation)
+
+
+State 7
+
+    4 line: id • T_NEWLINE
+
+    T_NEWLINE  shift, and go to state 9
+
+
+State 8
+
+    5 line: T_QUIT T_NEWLINE •
+
+    $default  reduce using rule 5 (line)
+
+
+State 9
+
+    4 line: id T_NEWLINE •
 
     $default  reduce using rule 4 (line)

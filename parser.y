@@ -2,31 +2,48 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 extern int yylex();
 extern int yyparse();
 extern FILE* yyin;
+extern char* yytext;
 
 void yyerror(const char* s);
 %}
 
-%token T_IDENTIFIER
-%token T_NEWLINE
+%union {
+	char* TYPE_STRING;
+	int TYPE_INTEGER;
+}
 
-%start new_line
+%token<TYPE_STRING> T_IDENTIFIER
+%token<TYPE_INTEGER> T_NUMBER
+%token T_NEWLINE T_QUIT
+
+%type<TYPE_STRING> id
+
+%start computation
 
 %%
 
 computation:
-	   | computation line
+		| computation line
 ;
 
 line: T_NEWLINE
-    | expression T_NEWLINE { printf("\tResult: %s\n", $1); }
+    | id T_NEWLINE { printf("\tResult: %s\n", $1); }
+    | T_QUIT T_NEWLINE { printf("bye!\n"); exit(0); }
+
+id: T_IDENTIFIER { $$ = strdup(yytext); }
 ;
 
-expression: T_IDENTIFIER				{ $$ = $1; }
-;
+/* id: T_IDENTIFIER
+    | T_IDENTIFIER T_NEWLINE // { printf("\tResult: %s\n", $$); }
+; */
+
+/* expression: T_IDENTIFIER { $$ = $1; }
+; */
 
 %%
 
