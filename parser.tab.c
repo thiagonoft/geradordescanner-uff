@@ -74,13 +74,13 @@
 #include <string.h>
 
 typedef struct Symbol {
-    char *name;
-    char *type; // "int", "float", etc.
-    struct Symbol *next; // Para colisões em um possível hashing
+    char* name;
+    char* type; // "int", "float", etc.
+    struct Symbol* next; // Para colisões em um possível hashing
 } Symbol;
 
 #define HASH_SIZE 101
-static Symbol *symbol_table[HASH_SIZE];
+static Symbol* symbol_table[HASH_SIZE];
 
 unsigned hash(char *str) {
     unsigned hashval;
@@ -90,7 +90,7 @@ unsigned hash(char *str) {
 }
 
 Symbol *lookup_symbol(char *name) {
-    Symbol *sp;
+    Symbol* sp;
     for (sp = symbol_table[hash(name)]; sp != NULL; sp = sp->next) {
         if (strcmp(name, sp->name) == 0)
             return sp;
@@ -98,11 +98,11 @@ Symbol *lookup_symbol(char *name) {
     return NULL;
 }
 
-Symbol *insert_symbol(char *name, char *type) {
+Symbol* insert_symbol(char *name, char *type) {
     unsigned hashval;
-    Symbol *sp = lookup_symbol(name);
+    Symbol* sp = lookup_symbol(name);
     if (sp == NULL) {
-        sp = (Symbol *)malloc(sizeof(*sp));
+        sp = (Symbol*) malloc(sizeof(*sp));
         if (sp == NULL || (sp->name = strdup(name)) == NULL)
             return NULL;
         sp->type = strdup(type);
@@ -620,7 +620,7 @@ static const yytype_int8 yytranslate[] =
 static const yytype_uint8 yyrline[] =
 {
        0,    81,    81,    82,    85,    86,    89,    90,    91,    92,
-      93,    94,    95,    96,    97,    98,    99,   100,   113,   114,
+      93,    94,    95,    96,    97,    98,    99,   101,   113,   114,
      115,   116,   117,   118,   119,   120,   121,   122,   123,   124,
      125,   129,   130,   133,   134,   137,   138,   141,   142,   145,
      146,   149,   150,   153,   154,   155,   158,   159,   162,   163,
@@ -1283,8 +1283,25 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+  case 17: /* Statement: LET ID '=' Expression  */
+#line 101 "parser.y"
+                                        {
+                    Symbol* sym = lookup_symbol((yyvsp[-2].sval));  // Aqui $2 deve ser do tipo char*
+                    if (sym == NULL) {
+                        // Declaração implícita se não encontrada na tabela
+                        sym = insert_symbol((yyvsp[-2].sval), "generic"); // Considera-se tipo genérico
+                        if (sym == NULL) {
+                            yyerror("Memory error: could not declare variable");
+                        }
+                    }
+                    // Aqui você pode adicionar código para lidar com a atribuição
+                    printf("Variable %s set.\n", (yyvsp[-2].sval));
+                }
+#line 1301 "parser.tab.c"
+    break;
 
-#line 1288 "parser.tab.c"
+
+#line 1305 "parser.tab.c"
 
       default: break;
     }

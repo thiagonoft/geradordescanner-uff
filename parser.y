@@ -4,13 +4,13 @@
 #include <string.h>
 
 typedef struct Symbol {
-    char *name;
-    char *type; // "int", "float", etc.
-    struct Symbol *next; // Para colisões em um possível hashing
+    char* name;
+    char* type; // "int", "float", etc.
+    struct Symbol* next; // Para colisões em um possível hashing
 } Symbol;
 
 #define HASH_SIZE 101
-static Symbol *symbol_table[HASH_SIZE];
+static Symbol* symbol_table[HASH_SIZE];
 
 unsigned hash(char *str) {
     unsigned hashval;
@@ -20,7 +20,7 @@ unsigned hash(char *str) {
 }
 
 Symbol *lookup_symbol(char *name) {
-    Symbol *sp;
+    Symbol* sp;
     for (sp = symbol_table[hash(name)]; sp != NULL; sp = sp->next) {
         if (strcmp(name, sp->name) == 0)
             return sp;
@@ -28,11 +28,11 @@ Symbol *lookup_symbol(char *name) {
     return NULL;
 }
 
-Symbol *insert_symbol(char *name, char *type) {
+Symbol* insert_symbol(char *name, char *type) {
     unsigned hashval;
-    Symbol *sp = lookup_symbol(name);
+    Symbol* sp = lookup_symbol(name);
     if (sp == NULL) {
-        sp = (Symbol *)malloc(sizeof(*sp));
+        sp = (Symbol*) malloc(sizeof(*sp));
         if (sp == NULL || (sp->name = strdup(name)) == NULL)
             return NULL;
         sp->type = strdup(type);
@@ -97,9 +97,9 @@ Statement: CLOSE '#' Integer
                 | IF Expression THEN Statement         
                 | INPUT IDList       
                 | INPUT '#' Integer ',' IDList       
-                | LET ID '=' Expression
-                /* | LET ID '=' Expression {
-                    Symbol *sym = lookup_symbol($2);  // Aqui $2 deve ser do tipo char*
+                /* | LET ID '=' Expression */
+                | LET ID '=' Expression {
+                    Symbol* sym = lookup_symbol($2);  // Aqui $2 deve ser do tipo char*
                     if (sym == NULL) {
                         // Declaração implícita se não encontrada na tabela
                         sym = insert_symbol($2, "generic"); // Considera-se tipo genérico
@@ -109,7 +109,7 @@ Statement: CLOSE '#' Integer
                     }
                     // Aqui você pode adicionar código para lidar com a atribuição
                     printf("Variable %s set.\n", $2);
-                } */
+                }
                 | NEXT IDList               
                 | OPEN Value FOR Access AS '#' Integer
                 | POKE ValueList
