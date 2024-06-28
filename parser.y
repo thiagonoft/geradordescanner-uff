@@ -71,6 +71,8 @@ void yyerror(const char* s);
 %token OR AND NOT 
 %token Branco
 
+%token NOT_EQUAL_TO_A "<>"
+%token NOT_EQUAL_TO_B "><"
 %token GREATER_OR_EQUAL_THAN ">="
 %token LESS_OR_EQUAL_THAN "<="
 
@@ -95,8 +97,8 @@ Statement: CLOSE '#' Integer
                 | IF Expression THEN Statement         
                 | INPUT IDList       
                 | INPUT '#' Integer ',' IDList       
-                /* | LET ID '=' Expression */
-                | LET ID '=' Expression {
+                | LET ID '=' Expression
+                /* | LET ID '=' Expression {
                     Symbol *sym = lookup_symbol($2);  // Aqui $2 deve ser do tipo char*
                     if (sym == NULL) {
                         // Declaração implícita se não encontrada na tabela
@@ -107,7 +109,7 @@ Statement: CLOSE '#' Integer
                     }
                     // Aqui você pode adicionar código para lidar com a atribuição
                     printf("Variable %s set.\n", $2);
-                }
+                } */
                 | NEXT IDList               
                 | OPEN Value FOR Access AS '#' Integer
                 | POKE ValueList
@@ -166,8 +168,8 @@ NotExp: NOT CompareExp
 ;
 
 CompareExp: AddExp '='  CompareExp 
-                // | AddExp '<>' CompareExp // que isso??
-                // | AddExp '><' CompareExp // que isso??
+                | AddExp NOT_EQUAL_TO_A CompareExp // que isso??
+                | AddExp NOT_EQUAL_TO_B CompareExp // que isso??
                 | AddExp '>'  CompareExp
                 | AddExp GREATER_OR_EQUAL_THAN CompareExp
                 | AddExp '<'  CompareExp
