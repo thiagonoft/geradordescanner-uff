@@ -129,7 +129,7 @@ void check_if_variable_is_declared(char* ID)
 %union {
     int ival;
     char* sval;
-    char* fval;
+    double fval;
 }
 
 %token <ival> Integer
@@ -270,9 +270,16 @@ Value: '(' Expression ')'
                 | Constant
 ;
 
-Constant: Integer
-             | String
-             | Real
+Constant: Integer {
+                printf("Integer: %d\n", $1);
+            }
+             | String {
+                printf("String: %s\n", $1);
+            }
+            // MUDAR NO SCANNER PRA PEGAR REAL
+             | Real {
+                printf("Double: %lf\n", $1);
+            }
 %%
 
 int main()
