@@ -102,7 +102,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 58 "parser.y"
+#line 70 "parser.y"
 
     int ival; // For integers
     char* sval; // For strings like identifiers

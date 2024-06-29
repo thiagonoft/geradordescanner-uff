@@ -32,8 +32,8 @@
 "AND"                 { return AND; }
 "OR"                  { return OR; }
 "CLOSE"               { return CLOSE; }
-"LET"               { return LET; }
-"AS"               { return AS; }
+"LET"                 { return LET; }
+"AS"                  { return AS; }
 
 "<>"                  { return NOT_EQUAL_TO_A; }
 "><"                  { return NOT_EQUAL_TO_B; }

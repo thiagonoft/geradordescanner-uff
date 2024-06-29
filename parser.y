@@ -12,16 +12,25 @@ typedef struct Symbol {
 #define HASH_SIZE 101
 static Symbol* symbol_table[HASH_SIZE];
 
-unsigned hash(char *str) {
+// função hash
+unsigned hash(char* str)
+{
     unsigned hashval;
-    for (hashval = 0; *str != '\0'; str++)
+    for(hashval = 0;
+        *str != '\0';
+        str++)
+    {
         hashval = *str + 31 * hashval;
+    }
     return hashval % HASH_SIZE;
 }
 
-Symbol *lookup_symbol(char *name) {
+Symbol* lookup_symbol(char *name) {
     Symbol* sp;
-    for (sp = symbol_table[hash(name)]; sp != NULL; sp = sp->next) {
+    for(sp = symbol_table[hash(name)];
+        sp != NULL;
+        sp = sp->next)
+    {
         if (strcmp(name, sp->name) == 0)
             return sp;
     }
@@ -31,7 +40,8 @@ Symbol *lookup_symbol(char *name) {
 Symbol* insert_symbol(char *name, char *type) {
     unsigned hashval;
     Symbol* sp = lookup_symbol(name);
-    if (sp == NULL) {
+    if (sp == NULL)
+    {
         sp = (Symbol*) malloc(sizeof(*sp));
         if (sp == NULL || (sp->name = strdup(name)) == NULL)
             return NULL;
@@ -39,7 +49,9 @@ Symbol* insert_symbol(char *name, char *type) {
         hashval = hash(name);
         sp->next = symbol_table[hashval];
         symbol_table[hashval] = sp;
-    } else {
+    }
+    else
+    {
         free(sp->type);
         sp->type = strdup(type);
     }
@@ -66,9 +78,9 @@ void yyerror(const char* s);
 %token Real
 %token NewLine
 %token <sval> ID
-%token CLOSE DATA DIM END FOR GOTO GOSUB IF INPUT LET NEXT OPEN POKE PRINT READ RETURN RESTORE RUN STOP SYS WAIT Remark 
+%token CLOSE DATA DIM END FOR GOTO GOSUB IF INPUT LET NEXT OPEN POKE PRINT READ RETURN RESTORE RUN STOP SYS WAIT Remark
 %token TO STEP AS THEN OUTPUT
-%token OR AND NOT 
+%token OR AND NOT
 %token Branco
 
 %token NOT_EQUAL_TO_A "<>"
@@ -78,7 +90,7 @@ void yyerror(const char* s);
 
 %%
 
-Lines: Integer Statements NewLine Lines 
+Lines: Integer Statements NewLine Lines
                 | Integer Statements NewLine
 ;
 
@@ -87,35 +99,65 @@ Statements: Statement ':' Statements
 ;
 
 Statement: CLOSE '#' Integer
-                | DATA ConstantList 
+                | DATA ConstantList
                 | DIM ID '(' IntegerList ')'
-                | END          
-                | FOR ID '=' Expression TO Expression     
-                | FOR ID '=' Expression TO Expression STEP Integer
-                | GOTO Expression 
-                | GOSUB Expression 
-                | IF Expression THEN Statement         
-                | INPUT IDList       
-                | INPUT '#' Integer ',' IDList       
-                /* | LET ID '=' Expression */
-                | LET ID '=' Expression {
-                    Symbol* sym = lookup_symbol($2);  // Aqui $2 deve ser do tipo char*
-                    if (sym == NULL) {
+                | END
+                | FOR ID '=' Expression TO Expression {
+                    Symbol* sym = lookup_symbol($2);
+                    if (sym == NULL)
+                    {
                         // Declaração implícita se não encontrada na tabela
-                        sym = insert_symbol($2, "generic"); // Considera-se tipo genérico
-                        if (sym == NULL) {
+                        sym = insert_symbol($2, "generic"); // Considera tipo genérico
+                        if (sym == NULL)
+                        {
                             yyerror("Memory error: could not declare variable");
                         }
+                        else
+                        {
+                            printf("Variable implicitly %s set\n", $2);
+                        }
                     }
-                    // Aqui você pode adicionar código para lidar com a atribuição
-                    printf("Variable %s set.\n", $2);
+                    else
+                    {
+                        if(strcmp(sym->type, "generic"))
+                        {
+                            printf("Type %s is generic\n", $2);
+                        }
+                    }
                 }
-                | NEXT IDList               
+                | FOR ID '=' Expression TO Expression STEP Integer
+                | GOTO Expression
+                | GOSUB Expression
+                | IF Expression THEN Statement
+                | INPUT IDList
+                | INPUT '#' Integer ',' IDList
+                | LET ID '=' Expression {
+                    Symbol* sym = lookup_symbol($2);
+                    if (sym == NULL)
+                    {
+                        // Declaração implícita se não encontrada na tabela
+                        sym = insert_symbol($2, "generic"); // Considera tipo genérico
+                        if (sym == NULL)
+                        {
+                            yyerror("Memory error: could not declare variable");
+                        }
+                        else
+                        {
+                            printf("Variable implicitly %s set\n", $2);
+                        }
+                    }
+                    else
+                    {
+                        // lidar com a atribuição
+                        printf("Variable %s updated or redeclared\n", $2);
+                    }
+                }
+                | NEXT IDList
                 | OPEN Value FOR Access AS '#' Integer
                 | POKE ValueList
                 | PRINT PrintList
                 | PRINT '#' Integer ',' PrintList
-                | READ IDList           
+                | READ IDList
                 | RETURN
                 | RESTORE
                 | RUN
@@ -123,75 +165,74 @@ Statement: CLOSE '#' Integer
                 | SYS Value
                 | WAIT ValueList
                 | Remark
-                
 ;
 
 Access: INPUT
              | OUTPUT
 ;
 
-IDList: ID ',' IDList 
-             | ID 
+IDList: ID ',' IDList
+             | ID
 ;
 
-ValueList: Value ',' ValueList 
-                | Value 
+ValueList: Value ',' ValueList
+                | Value
 ;
 
-ConstantList: Constant ',' ConstantList 
-                | Constant 
+ConstantList: Constant ',' ConstantList
+                | Constant
 ;
 
 IntegerList: Integer ',' IntegerList
                     | Integer
 ;
 
-ExpressionList: Expression ',' ExpressionList 
-                    | Expression 
+ExpressionList: Expression ',' ExpressionList
+                    | Expression
 ;
 
 PrintList: Expression ';' PrintList
-                    | Expression 
+                    | Expression
                     | Branco
 ;
 
-Expression: AndExp OR Expression 
-                | AndExp 
+Expression: AndExp OR Expression
+                | AndExp
 ;
 
-AndExp: NotExp AND AndExp 
-                | NotExp 
+AndExp: NotExp AND AndExp
+                | NotExp
 ;
 
-NotExp: NOT CompareExp 
-                | CompareExp 
+NotExp: NOT CompareExp
+                | CompareExp
 ;
 
-CompareExp: AddExp '='  CompareExp 
-                | AddExp NOT_EQUAL_TO_A CompareExp // que isso??
-                | AddExp NOT_EQUAL_TO_B CompareExp // que isso??
+CompareExp: AddExp '='  CompareExp
+                | AddExp NOT_EQUAL_TO_A CompareExp
+                | AddExp NOT_EQUAL_TO_B CompareExp
                 | AddExp '>'  CompareExp
                 | AddExp GREATER_OR_EQUAL_THAN CompareExp
                 | AddExp '<'  CompareExp
                 | AddExp LESS_OR_EQUAL_THAN CompareExp
-                | AddExp 
+                | AddExp
 ;
 
-AddExp: MultExp '+' AddExp 
-                | MultExp '-' AddExp 
-                | MultExp 
+AddExp: MultExp '+' AddExp
+                | MultExp '-' AddExp
+                | MultExp
 ;
 
-MultExp: NegateExp '*' MultExp 
-                | NegateExp '/' MultExp 
-                | NegateExp 
+MultExp: NegateExp '*' MultExp
+                | NegateExp '/' MultExp
+                | NegateExp
 ;
 
-NegateExp: '-' PowerExp 
-                | PowerExp 
+NegateExp: '-' PowerExp
+                | PowerExp
 ;
 
-PowerExp: Value PowerExp2 
+PowerExp: Value PowerExp2
                 | Value
 ;
 
@@ -199,20 +240,22 @@ PowerExp2: '^' PowerExp
 ;
 
 Value: '(' Expression ')'
-                | ID 
+                | ID
                 | ID '(' ExpressionList ')'
                 | Constant
 ;
 
-Constant: Integer 
-             | String 
-             | Real 
+Constant: Integer
+             | String
+             | Real
 %%
 
-int main() {
+int main()
+{
 	yyin = stdin;
 
-	do {
+	do
+    {
 		yyparse();
 	} while(!feof(yyin));
 

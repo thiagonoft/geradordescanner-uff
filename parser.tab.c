@@ -82,16 +82,25 @@ typedef struct Symbol {
 #define HASH_SIZE 101
 static Symbol* symbol_table[HASH_SIZE];
 
-unsigned hash(char *str) {
+// função hash
+unsigned hash(char* str)
+{
     unsigned hashval;
-    for (hashval = 0; *str != '\0'; str++)
+    for(hashval = 0;
+        *str != '\0';
+        str++)
+    {
         hashval = *str + 31 * hashval;
+    }
     return hashval % HASH_SIZE;
 }
 
-Symbol *lookup_symbol(char *name) {
+Symbol* lookup_symbol(char *name) {
     Symbol* sp;
-    for (sp = symbol_table[hash(name)]; sp != NULL; sp = sp->next) {
+    for(sp = symbol_table[hash(name)];
+        sp != NULL;
+        sp = sp->next)
+    {
         if (strcmp(name, sp->name) == 0)
             return sp;
     }
@@ -101,7 +110,8 @@ Symbol *lookup_symbol(char *name) {
 Symbol* insert_symbol(char *name, char *type) {
     unsigned hashval;
     Symbol* sp = lookup_symbol(name);
-    if (sp == NULL) {
+    if (sp == NULL)
+    {
         sp = (Symbol*) malloc(sizeof(*sp));
         if (sp == NULL || (sp->name = strdup(name)) == NULL)
             return NULL;
@@ -109,7 +119,9 @@ Symbol* insert_symbol(char *name, char *type) {
         hashval = hash(name);
         sp->next = symbol_table[hashval];
         symbol_table[hashval] = sp;
-    } else {
+    }
+    else
+    {
         free(sp->type);
         sp->type = strdup(type);
     }
@@ -123,7 +135,7 @@ extern char* yytext;
 
 void yyerror(const char* s);
 
-#line 127 "parser.tab.c"
+#line 139 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -619,14 +631,14 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    81,    81,    82,    85,    86,    89,    90,    91,    92,
-      93,    94,    95,    96,    97,    98,    99,   101,   113,   114,
-     115,   116,   117,   118,   119,   120,   121,   122,   123,   124,
-     125,   129,   130,   133,   134,   137,   138,   141,   142,   145,
-     146,   149,   150,   153,   154,   155,   158,   159,   162,   163,
-     166,   167,   170,   171,   172,   173,   174,   175,   176,   177,
-     180,   181,   182,   185,   186,   187,   190,   191,   194,   195,
-     198,   201,   202,   203,   204,   207,   208,   209
+       0,    93,    93,    94,    97,    98,   101,   102,   103,   104,
+     105,   128,   129,   130,   131,   132,   133,   134,   155,   156,
+     157,   158,   159,   160,   161,   162,   163,   164,   165,   166,
+     167,   170,   171,   174,   175,   178,   179,   182,   183,   186,
+     187,   190,   191,   194,   195,   196,   199,   200,   203,   204,
+     207,   208,   211,   212,   213,   214,   215,   216,   217,   218,
+     221,   222,   223,   226,   227,   228,   231,   232,   235,   236,
+     239,   242,   243,   244,   245,   248,   249,   250
 };
 #endif
 
@@ -1283,25 +1295,62 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 17: /* Statement: LET ID '=' Expression  */
-#line 101 "parser.y"
-                                        {
-                    Symbol* sym = lookup_symbol((yyvsp[-2].sval));  // Aqui $2 deve ser do tipo char*
-                    if (sym == NULL) {
+  case 10: /* Statement: FOR ID '=' Expression TO Expression  */
+#line 105 "parser.y"
+                                                      {
+                    Symbol* sym = lookup_symbol((yyvsp[-4].sval));
+                    if (sym == NULL)
+                    {
                         // Declaração implícita se não encontrada na tabela
-                        sym = insert_symbol((yyvsp[-2].sval), "generic"); // Considera-se tipo genérico
-                        if (sym == NULL) {
+                        sym = insert_symbol((yyvsp[-4].sval), "generic"); // Considera tipo genérico
+                        if (sym == NULL)
+                        {
                             yyerror("Memory error: could not declare variable");
                         }
+                        else
+                        {
+                            printf("Variable implicitly %s set\n", (yyvsp[-4].sval));
+                        }
                     }
-                    // Aqui você pode adicionar código para lidar com a atribuição
-                    printf("Variable %s set.\n", (yyvsp[-2].sval));
+                    else
+                    {
+                        if(strcmp(sym->type, "generic"))
+                        {
+                            printf("Type %s is generic\n", (yyvsp[-4].sval));
+                        }
+                    }
                 }
-#line 1301 "parser.tab.c"
+#line 1324 "parser.tab.c"
+    break;
+
+  case 17: /* Statement: LET ID '=' Expression  */
+#line 134 "parser.y"
+                                        {
+                    Symbol* sym = lookup_symbol((yyvsp[-2].sval));
+                    if (sym == NULL)
+                    {
+                        // Declaração implícita se não encontrada na tabela
+                        sym = insert_symbol((yyvsp[-2].sval), "generic"); // Considera tipo genérico
+                        if (sym == NULL)
+                        {
+                            yyerror("Memory error: could not declare variable");
+                        }
+                        else
+                        {
+                            printf("Variable implicitly %s set\n", (yyvsp[-2].sval));
+                        }
+                    }
+                    else
+                    {
+                        // lidar com a atribuição
+                        printf("Variable %s updated or redeclared\n", (yyvsp[-2].sval));
+                    }
+                }
+#line 1350 "parser.tab.c"
     break;
 
 
-#line 1305 "parser.tab.c"
+#line 1354 "parser.tab.c"
 
       default: break;
     }
@@ -1494,13 +1543,15 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 210 "parser.y"
+#line 251 "parser.y"
 
 
-int main() {
+int main()
+{
 	yyin = stdin;
 
-	do {
+	do
+    {
 		yyparse();
 	} while(!feof(yyin));
 
