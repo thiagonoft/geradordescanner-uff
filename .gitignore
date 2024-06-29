@@ -1,3 +1,7 @@
 Trabalho 1/printNFA.py
 .vscode
 Trabalho 1//parser/__pycache__
+parser.tab.c
+parser.tab.h
+parser.output
+./parser

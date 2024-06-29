@@ -143,7 +143,7 @@ Statement: CLOSE '#' Integer
                         }
                         else
                         {
-                            printf("Variable implicitly %s set\n", $2);
+                            printf("Variable %s implicitly set\n", $2);
                         }
                     }
                     else
