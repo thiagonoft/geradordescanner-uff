@@ -64,18 +64,77 @@ extern FILE* yyin;
 extern char* yytext;
 
 void yyerror(const char* s);
-%}
 
-
-%union {
-    int ival; // For integers
-    char* sval; // For strings like identifiers
+// GRAMMAR
+void declare_variable_on_let(char* ID)
+{
+    Symbol* sym = lookup_symbol(ID);
+    if (sym == NULL)
+    {
+        // Declaração implícita se não encontrada na tabela
+        sym = insert_symbol(ID, "generic"); // Considera tipo genérico
+        if (sym == NULL)
+        {
+            yyerror("Memory error: could not declare variable");
+        }
+        else
+        {
+            printf("Variable %s implicitly set\n", ID);
+        }
+    }
+    else
+    {
+        // lidar com a atribuição
+        printf("Variable %s updated or redeclared\n", ID);
+    }
 }
 
+void declare_variable_on_for(char* ID)
+{
+    Symbol* sym = lookup_symbol(ID);
+    if (sym == NULL)
+    {
+        // Declaração implícita se não encontrada na tabela
+        sym = insert_symbol(ID, "generic"); // Considera tipo genérico
+        if (sym == NULL)
+        {
+            yyerror("Memory error: could not declare variable");
+        }
+        else
+        {
+            printf("Variable %s implicitly set\n", ID);
+        }
+    }
+    else
+    {
+        printf("Variable %s is of type %s\n", ID, sym->type);
+    }
+}
+
+void check_if_variable_is_declared(char* ID)
+{
+    Symbol* sym = lookup_symbol(ID);
+    if (sym == NULL)
+    {
+        printf("Variable %s is not declared\n", ID);
+    }
+    else
+    {
+        printf("Variable %s is of type %s\n", ID, sym->type);
+    }
+}
+
+%}
+
+%union {
+    int ival;
+    char* sval;
+    char* fval;
+}
 
 %token <ival> Integer
-%token String
-%token Real
+%token <sval> String
+%token <fval> Real
 %token NewLine
 %token <sval> ID
 %token CLOSE DATA DIM END FOR GOTO GOSUB IF INPUT LET NEXT OPEN POKE PRINT READ RETURN RESTORE RUN STOP SYS WAIT Remark
@@ -103,54 +162,18 @@ Statement: CLOSE '#' Integer
                 | DIM ID '(' IntegerList ')'
                 | END
                 | FOR ID '=' Expression TO Expression {
-                    Symbol* sym = lookup_symbol($2);
-                    if (sym == NULL)
-                    {
-                        // Declaração implícita se não encontrada na tabela
-                        sym = insert_symbol($2, "generic"); // Considera tipo genérico
-                        if (sym == NULL)
-                        {
-                            yyerror("Memory error: could not declare variable");
-                        }
-                        else
-                        {
-                            printf("Variable implicitly %s set\n", $2);
-                        }
-                    }
-                    else
-                    {
-                        if(strcmp(sym->type, "generic"))
-                        {
-                            printf("Type %s is generic\n", $2);
-                        }
-                    }
+                    declare_variable_on_for($2);
                 }
-                | FOR ID '=' Expression TO Expression STEP Integer
+                | FOR ID '=' Expression TO Expression STEP Integer {
+                    declare_variable_on_for($2);
+                }
                 | GOTO Expression
                 | GOSUB Expression
                 | IF Expression THEN Statement
                 | INPUT IDList
                 | INPUT '#' Integer ',' IDList
                 | LET ID '=' Expression {
-                    Symbol* sym = lookup_symbol($2);
-                    if (sym == NULL)
-                    {
-                        // Declaração implícita se não encontrada na tabela
-                        sym = insert_symbol($2, "generic"); // Considera tipo genérico
-                        if (sym == NULL)
-                        {
-                            yyerror("Memory error: could not declare variable");
-                        }
-                        else
-                        {
-                            printf("Variable %s implicitly set\n", $2);
-                        }
-                    }
-                    else
-                    {
-                        // lidar com a atribuição
-                        printf("Variable %s updated or redeclared\n", $2);
-                    }
+                    declare_variable_on_let($2);
                 }
                 | NEXT IDList
                 | OPEN Value FOR Access AS '#' Integer
@@ -240,7 +263,9 @@ PowerExp2: '^' PowerExp
 ;
 
 Value: '(' Expression ')'
-                | ID
+                | ID {
+                    check_if_variable_is_declared($1);
+                }
                 | ID '(' ExpressionList ')'
                 | Constant
 ;
