@@ -1,2 +1,3 @@
 10 LET X = 10
+20 LET Y = "Hello"
 30 LET Z = X + Y

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 typedef struct Symbol {
     char* name;
@@ -66,20 +67,19 @@ extern char* yytext;
 void yyerror(const char* s);
 
 // GRAMMAR
-void declare_variable_on_let(char* ID)
+void declare_variable_on_let(char* ID, char* type)
 {
     Symbol* sym = lookup_symbol(ID);
     if (sym == NULL)
     {
-        // Declaração implícita se não encontrada na tabela
-        sym = insert_symbol(ID, "generic"); // Considera tipo genérico
+        sym = insert_symbol(ID, type);
         if (sym == NULL)
         {
             yyerror("Memory error: could not declare variable");
         }
         else
         {
-            printf("Variable %s implicitly set\n", ID);
+            printf("Variable %s explicitly set\n", ID);
         }
     }
     else
@@ -111,17 +111,28 @@ void declare_variable_on_for(char* ID)
     }
 }
 
-void check_if_variable_is_declared(char* ID)
+bool check_if_variable_is_declared(char* ID)
 {
     Symbol* sym = lookup_symbol(ID);
     if (sym == NULL)
     {
-        printf("Variable %s is not declared\n", ID);
+        // printf("Variable %s is not declared\n", ID);
+        return false;
     }
     else
     {
-        printf("Variable %s is of type %s\n", ID, sym->type);
+        // printf("Variable %s is of type %s\n", ID, sym->type);
+        return true;
     }
+}
+
+char* get_variable_type(char* ID) {
+    Symbol* sym = lookup_symbol(ID);
+    if (sym == NULL) {
+        yyerror("Undeclared variable");
+        return NULL;
+    }
+    return sym->type;
 }
 
 %}
@@ -129,7 +140,8 @@ void check_if_variable_is_declared(char* ID)
 %union {
     int ival;
     char* sval;
-    double fval;
+    float fval;
+    char* type;
 }
 
 %token <ival> Integer
@@ -146,6 +158,8 @@ void check_if_variable_is_declared(char* ID)
 %token NOT_EQUAL_TO_B "><"
 %token GREATER_OR_EQUAL_THAN ">="
 %token LESS_OR_EQUAL_THAN "<="
+
+%type <type> Constant Expression AndExp NotExp CompareExp AddExp MultExp NegateExp PowerExp PowerExp2 Value
 
 %%
 
@@ -173,7 +187,8 @@ Statement: CLOSE '#' Integer
                 | INPUT IDList
                 | INPUT '#' Integer ',' IDList
                 | LET ID '=' Expression {
-                    declare_variable_on_let($2);
+                    declare_variable_on_let($2, $4);
+                    printf("$4 = %s\n", $4);
                 }
                 | NEXT IDList
                 | OPEN Value FOR Access AS '#' Integer
@@ -264,21 +279,38 @@ PowerExp2: '^' PowerExp
 
 Value: '(' Expression ')'
                 | ID {
-                    check_if_variable_is_declared($1);
+                    bool declared = check_if_variable_is_declared($1);
+                    if(declared)
+                    {
+                        char* varType = get_variable_type($1);
+                        printf("Variable %s is of type %s\n", $1, varType);
+                        $$ = varType;
+                    }
+                    else
+                    {
+                        yyerror("Semantic error - Variable used before declaration.");
+                    } 
                 }
-                | ID '(' ExpressionList ')'
-                | Constant
+                /* | ID '(' ExpressionList ')' */
+                | Constant {
+                    // printf("$$ = %s\n", $$);
+                    $$ = $1;
+                    // printf("$1 = %s\n", $1);
+                }
 ;
 
 Constant: Integer {
-                printf("Integer: %d\n", $1);
+                $$ = "int";
+                // printf("Integer: %d\n", $1);
             }
              | String {
-                printf("String: %s\n", $1);
+                $$ = "string";
+                // printf("String: %s\n", $1);
             }
             // MUDAR NO SCANNER PRA PEGAR REAL
              | Real {
-                printf("Double: %lf\n", $1);
+                $$ = "float";
+                // printf("float: %f\n", $1);
             }
 %%
 
