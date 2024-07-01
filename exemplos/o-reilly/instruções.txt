@@ -1,4 +1,0 @@
-Para compilar e executar use:
-lex flexbison1-1.l
-gcc lex.yy.c -lfl
-./a.out

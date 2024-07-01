@@ -85,6 +85,24 @@ void handle_arithmetic_types(char* typeA, char* typeB){
     }
 }
 
+char* convert_arithmetic_types(char* typeA, char* typeB){
+    if(
+        (
+            (strcmp(typeA, "int") == 0)
+         && (strcmp(typeB, "float") == 0)
+        )
+    ) return typeB;
+    else if (
+        (
+            (strcmp(typeA, "float") == 0)
+         && (strcmp(typeB, "int") == 0)
+        )
+    ) return typeA;
+    else {
+        return typeA;
+    }
+}
+
 void handle_equal_types(char* typeA, char* typeB){
     if(strcmp(typeA, typeB) != 0){
         yyerror("Type error - Operation between two different types");
@@ -136,7 +154,7 @@ bool check_if_variable_is_declared(char* ID){
     return true;
 }
 
-int PYTHON_TAB = 0;
+char* python_code;
 
 %}
 
@@ -169,16 +187,20 @@ int PYTHON_TAB = 0;
 %type <attrib> Statement Statements PrintList ExpressionList IDList IntegerList ConstantList ValueList
 
 %%
-// TODO: FLOAT (testExpr.in)
+
 Lines: Integer Statements NewLine Lines {
-                    // printf("DEBUG_PY:%d\n", PYTHON_TAB);
-                    for(int i = 0; i < PYTHON_TAB;i++) printf("\t");
-                    printf("%s\n", $2.code);
+                    char* line = (char*) malloc(strlen(python_code) + strlen($2.code) + 2);
+                    strcpy(line, $2.code);
+                    strcat(line, "\n");
+                    strcat(line, python_code);
+                    python_code = line;
                 }
                 | Integer Statements NewLine {
-                    // printf("DEBUG_PY:%d\n", PYTHON_TAB);
-                    for(int i = 0; i < PYTHON_TAB;i++) printf("\t");
-                    printf("%s\n", $2.code);
+                    char* line = (char*) malloc(strlen(python_code) + strlen($2.code) + 2);
+                    strcpy(line, $2.code);
+                    strcat(line, "\n");
+                    strcat(line, python_code);
+                    python_code = line;
                 }
 ;
 
@@ -230,7 +252,7 @@ Statement: CLOSE '#' Integer {
                     $$.code = expr;
                 }
                 | INPUT IDList {
-                    char* expr = (char*)malloc(strlen($2.code) + 100);
+                    char* expr = (char*)malloc(strlen($2.code) + 27);
                     sprintf(expr, "%s = tuple(input().split())", $2.code);
                     $$.code = expr;
                 }
@@ -255,6 +277,12 @@ Statement: CLOSE '#' Integer {
                 }
                 | PRINT PrintList {
                     char* expr = (char*)malloc(strlen($2.code) + 20);
+                    int i = 0;
+                    // Substitute ; for ,
+                    while($2.code[i] != '\0') {
+                        if($2.code[i] == ';') $2.code[i] = ',';
+                        i++;
+                    }
                     sprintf(expr, "print(%s)", $2.code);
                     $$.code = expr;
                 }
@@ -466,7 +494,7 @@ CompareExp: AddExp '=' CompareExp {
 
 AddExp: MultExp '+' AddExp {
                     handle_arithmetic_types($1.type, $3.type);
-                    $$.type = $1.type; 
+                    $$.type = convert_arithmetic_types($1.type, $3.type);
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s + %s)", $1.code, $3.code);
@@ -474,7 +502,7 @@ AddExp: MultExp '+' AddExp {
                 }
                 | MultExp '-' AddExp {
                     handle_arithmetic_types($1.type, $3.type);
-                    $$.type = $1.type; 
+                    $$.type = convert_arithmetic_types($1.type, $3.type);
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s - %s)", $1.code, $3.code);
@@ -488,7 +516,7 @@ AddExp: MultExp '+' AddExp {
 
 MultExp: NegateExp '*' MultExp {
                     handle_arithmetic_types($1.type, $3.type);
-                    $$.type = $1.type; 
+                    $$.type = convert_arithmetic_types($1.type, $3.type);
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s * %s)", $1.code, $3.code);
@@ -496,7 +524,7 @@ MultExp: NegateExp '*' MultExp {
                 }
                 | NegateExp '/' MultExp {
                     handle_arithmetic_types($1.type, $3.type);
-                    $$.type = $1.type; 
+                    $$.type = convert_arithmetic_types($1.type, $3.type);
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s / %s)", $1.code, $3.code);
@@ -522,7 +550,7 @@ NegateExp: '-' PowerExp {
 ;
 
 PowerExp: Value PowerExp2 {
-                    $$.type = $1.type; 
+                    $$.type = $1.type;
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($2.code) + 10);
                     sprintf(expr, "(%s ** %s)", $1.code, $2.code);
@@ -588,12 +616,27 @@ Constant: Integer {
 %%
 
 int main(){
+    FILE *file;
     yyin = stdin;
+    python_code = (char*) malloc(sizeof(char) * 1024 * 1024);
 
     do {
         yyparse();
     } while(!feof(yyin));
 
+    /* printf("%s", python_code); */
+
+    file = fopen("output.py", "w");
+    if (file == NULL) {
+        fprintf(stderr, "Could not open file for writing\n");
+        free(python_code);
+        return 1;
+    }
+
+    fprintf(file, "%s", python_code);
+    fclose(file);
+
+    free(python_code);
     return 0;
 }
 

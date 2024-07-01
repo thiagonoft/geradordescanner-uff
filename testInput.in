@@ -1,5 +1,4 @@
 5 LET X = 0
 6 LET Y = 0
 10 INPUT X, Y
-20 LET Z = X + Y
-30 PRINT Z
+20 PRINT X; Y
