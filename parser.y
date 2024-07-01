@@ -105,7 +105,7 @@ void declare_variable_on_let(char* ID, char* type){
         if(sym == NULL){
             yyerror("Memory error: could not declare variable");
         } else {
-            printf("Variable %s explicitly set to type %s\n", ID, type);
+            printf("# Variable %s explicitly set to type %s\n", ID, type);
         }
     } else {
         if(strcmp(sym->type, type) != 0){
@@ -121,7 +121,7 @@ void declare_variable_on_for(char* ID){
         if(sym == NULL){
             yyerror("Memory error: could not declare variable");
         } else {
-            printf("Variable %s implicitly set to type int\n", ID);
+            printf("# Variable %s implicitly set to type int\n", ID);
         }
     } else {
         handle_equal_types(sym->type, "int");
@@ -135,6 +135,8 @@ bool check_if_variable_is_declared(char* ID){
     }
     return true;
 }
+
+int PYTHON_TAB = 0;
 
 %}
 
@@ -165,15 +167,17 @@ bool check_if_variable_is_declared(char* ID){
 
 %type <attrib> Constant Expression AndExp NotExp CompareExp AddExp MultExp NegateExp PowerExp PowerExp2 Value
 %type <attrib> Statement Statements PrintList ExpressionList IDList IntegerList ConstantList ValueList
-/* 
- */
 
 %%
 
 Lines: Integer Statements NewLine Lines {
+                    // printf("DEBUG_PY:%d\n", PYTHON_TAB);
+                    for(int i = 0; i < PYTHON_TAB;i++) printf("\t");
                     printf("%s\n", $2.code);
                 }
                 | Integer Statements NewLine {
+                    // printf("DEBUG_PY:%d\n", PYTHON_TAB);
+                    for(int i = 0; i < PYTHON_TAB;i++) printf("\t");
                     printf("%s\n", $2.code);
                 }
 ;
@@ -198,7 +202,7 @@ Statement: CLOSE '#' Integer {
                     declare_variable_on_let($2, "int");
                 }
                 | END {
-                    $$.code = strdup("");
+                    $$.code = strdup("exit()");
                 }
                 | FOR ID '=' Expression TO Expression {
                     declare_variable_on_for($2);
@@ -210,7 +214,9 @@ Statement: CLOSE '#' Integer {
                 | FOR ID '=' Expression TO Expression STEP Integer {
                     declare_variable_on_for($2);
 
-                    $$.code = strdup("");
+                    char* expr = (char*)malloc(strlen($2) + strlen($4.code) + strlen($6.code) + 30);
+                    sprintf(expr, "for %s in range(%s, %s + 1, %d):", $2, $4.code, $6.code, $8);
+                    $$.code = expr;
                 }
                 | GOTO Expression {
                     $$.code = strdup("");
@@ -219,10 +225,14 @@ Statement: CLOSE '#' Integer {
                     $$.code = strdup("");
                 }
                 | IF Expression THEN Statement {
-                    $$.code = strdup("");
+                    char* expr = (char*)malloc(strlen($2.code) + strlen($4.code) + 20);
+                    sprintf(expr, "if %s:\n\t%s", $2.code, $4.code);
+                    $$.code = expr;
                 }
                 | INPUT IDList {
-                    $$.code = strdup("");
+                    char* expr = (char*)malloc(strlen($2.code) + 100);
+                    sprintf(expr, "%s = tuple(input().split())", $2.code);
+                    $$.code = expr;
                 }
                 | INPUT '#' Integer ',' IDList {
                     $$.code = strdup("");
@@ -255,7 +265,7 @@ Statement: CLOSE '#' Integer {
                     $$.code = strdup("");
                 }
                 | RETURN {
-                    $$.code = strdup("");
+                    $$.code = strdup("return");
                 }
                 | RESTORE {
                     $$.code = strdup("");
@@ -340,7 +350,7 @@ PrintList: Expression ';' PrintList {
 
 Expression: AndExp OR Expression {
                     handle_equal_types($1.type, $3.type);
-                    $$.type = $1.type; // Assume OR expressions yield the same type
+                    $$.type = $1.type;
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s or %s)", $1.code, $3.code);
@@ -354,7 +364,7 @@ Expression: AndExp OR Expression {
 
 AndExp: NotExp AND AndExp {
                     handle_equal_types($1.type, $3.type);
-                    $$.type = $1.type; // Assume AND expressions yield the same type
+                    $$.type = $1.type;
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s and %s)", $1.code, $3.code);
@@ -382,7 +392,7 @@ CompareExp: AddExp '=' CompareExp {
                     handle_non_numeric($1.type);
                     handle_non_numeric($3.type);
                     handle_equal_types($1.type, $3.type);
-                    $$.type = "int"; // Comparison yields boolean type
+                    $$.type = "int";
                     
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s == %s)", $1.code, $3.code);
@@ -392,7 +402,7 @@ CompareExp: AddExp '=' CompareExp {
                     handle_non_numeric($1.type);
                     handle_non_numeric($3.type);
                     handle_equal_types($1.type, $3.type);
-                    $$.type = "int"; // Comparison yields boolean type
+                    $$.type = "int";
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s != %s)", $1.code, $3.code);
@@ -402,7 +412,7 @@ CompareExp: AddExp '=' CompareExp {
                     handle_non_numeric($1.type);
                     handle_non_numeric($3.type);
                     handle_equal_types($1.type, $3.type);
-                    $$.type = "int"; // Comparison yields boolean type
+                    $$.type = "int";
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s != %s)", $1.code, $3.code);
@@ -412,7 +422,7 @@ CompareExp: AddExp '=' CompareExp {
                     handle_non_numeric($1.type);
                     handle_non_numeric($3.type);
                     handle_equal_types($1.type, $3.type);
-                    $$.type = "int"; // Comparison yields boolean type
+                    $$.type = "int";
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s > %s)", $1.code, $3.code);
@@ -422,7 +432,7 @@ CompareExp: AddExp '=' CompareExp {
                     handle_non_numeric($1.type);
                     handle_non_numeric($3.type);
                     handle_equal_types($1.type, $3.type);
-                    $$.type = "int"; // Comparison yields boolean type
+                    $$.type = "int";
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s >= %s)", $1.code, $3.code);
@@ -432,7 +442,7 @@ CompareExp: AddExp '=' CompareExp {
                     handle_non_numeric($1.type);
                     handle_non_numeric($3.type);
                     handle_equal_types($1.type, $3.type);
-                    $$.type = "int"; // Comparison yields boolean type
+                    $$.type = "int";
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s < %s)", $1.code, $3.code);
@@ -442,7 +452,7 @@ CompareExp: AddExp '=' CompareExp {
                     handle_non_numeric($1.type);
                     handle_non_numeric($3.type);
                     handle_equal_types($1.type, $3.type);
-                    $$.type = "int"; // Comparison yields boolean type
+                    $$.type = "int";
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s <= %s)", $1.code, $3.code);
@@ -456,10 +466,7 @@ CompareExp: AddExp '=' CompareExp {
 
 AddExp: MultExp '+' AddExp {
                     handle_arithmetic_types($1.type, $3.type);
-                    $$.type = $1.type; // Assume result type is same as operands
-
-                    printf("DEBUG: %s\n", $3.code);
-                    printf("DEBUG2: %s\n", $1.code);
+                    $$.type = $1.type; 
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s + %s)", $1.code, $3.code);
@@ -467,7 +474,7 @@ AddExp: MultExp '+' AddExp {
                 }
                 | MultExp '-' AddExp {
                     handle_arithmetic_types($1.type, $3.type);
-                    $$.type = $1.type; // Assume result type is same as operands
+                    $$.type = $1.type; 
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s - %s)", $1.code, $3.code);
@@ -481,7 +488,7 @@ AddExp: MultExp '+' AddExp {
 
 MultExp: NegateExp '*' MultExp {
                     handle_arithmetic_types($1.type, $3.type);
-                    $$.type = $1.type; // Assume result type is same as operands
+                    $$.type = $1.type; 
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s * %s)", $1.code, $3.code);
@@ -489,7 +496,7 @@ MultExp: NegateExp '*' MultExp {
                 }
                 | NegateExp '/' MultExp {
                     handle_arithmetic_types($1.type, $3.type);
-                    $$.type = $1.type; // Assume result type is same as operands
+                    $$.type = $1.type; 
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($3.code) + 10);
                     sprintf(expr, "(%s / %s)", $1.code, $3.code);
@@ -515,7 +522,7 @@ NegateExp: '-' PowerExp {
 ;
 
 PowerExp: Value PowerExp2 {
-                    $$.type = $1.type; // Assume result type is same as base
+                    $$.type = $1.type; 
 
                     char* expr = (char*)malloc(strlen($1.code) + strlen($2.code) + 10);
                     sprintf(expr, "(%s ** %s)", $1.code, $2.code);
