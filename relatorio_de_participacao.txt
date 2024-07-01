@@ -1,0 +1,2 @@
+Thiago Lemos: gerador de scanner, contexto de identificadores
+Gustavo Queiroz: verificação de tipos, geração de código
