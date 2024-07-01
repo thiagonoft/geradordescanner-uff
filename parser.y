@@ -6,7 +6,7 @@
 
 typedef struct Symbol {
     char* name;
-    char* type; // "int", "float", etc.
+    char* type; // "int", "float", "string"
     struct Symbol* next; // Para colisões em um possível hashing
 } Symbol;
 
@@ -67,6 +67,37 @@ extern char* yytext;
 void yyerror(const char* s);
 
 // GRAMMAR
+char* get_variable_type(char* ID)
+{
+    Symbol* sym = lookup_symbol(ID);
+    if (sym == NULL) {
+        yyerror("Undeclared variable");
+        return NULL;
+    }
+    return sym->type;
+}
+
+void handle_arithmetic_types(char* typeA, char* typeB)
+{
+    if(strcmp(typeA, "int") != 0 || strcmp(typeB, "int") != 0) {
+        yyerror("Type error - Arithmetic operation between one or more non-arithmetic types");
+    }
+}
+
+void handle_equal_types(char* typeA, char* typeB)
+{
+    if(strcmp(typeA, typeB) != 0) {
+        yyerror("Type error - Operation between two different types");
+    }
+}
+
+void handle_non_numeric(char* type)
+{
+    if(strcmp(type, "string") == 0) {
+        yyerror("Type error - Expected numeric type");
+    }
+}
+
 void declare_variable_on_let(char* ID, char* type)
 {
     Symbol* sym = lookup_symbol(ID);
@@ -86,6 +117,10 @@ void declare_variable_on_let(char* ID, char* type)
     {
         // lidar com a atribuição
         printf("Variable %s updated or redeclared\n", ID);
+        if(strcmp(sym->type, type) != 0)
+        {
+            yyerror("Type error - Variable updated or redeclared with a different type");
+        }
     }
 }
 
@@ -94,8 +129,7 @@ void declare_variable_on_for(char* ID)
     Symbol* sym = lookup_symbol(ID);
     if (sym == NULL)
     {
-        // Declaração implícita se não encontrada na tabela
-        sym = insert_symbol(ID, "generic"); // Considera tipo genérico
+        sym = insert_symbol(ID, "int");
         if (sym == NULL)
         {
             yyerror("Memory error: could not declare variable");
@@ -105,9 +139,8 @@ void declare_variable_on_for(char* ID)
             printf("Variable %s implicitly set\n", ID);
         }
     }
-    else
-    {
-        printf("Variable %s is of type %s\n", ID, sym->type);
+    else {
+        handle_equal_types(sym->type, "int");
     }
 }
 
@@ -124,15 +157,6 @@ bool check_if_variable_is_declared(char* ID)
         // printf("Variable %s is of type %s\n", ID, sym->type);
         return true;
     }
-}
-
-char* get_variable_type(char* ID) {
-    Symbol* sym = lookup_symbol(ID);
-    if (sym == NULL) {
-        yyerror("Undeclared variable");
-        return NULL;
-    }
-    return sym->type;
 }
 
 %}
@@ -173,7 +197,9 @@ Statements: Statement ':' Statements
 
 Statement: CLOSE '#' Integer
                 | DATA ConstantList
-                | DIM ID '(' IntegerList ')'
+                | DIM ID '(' IntegerList ')' {
+                    declare_variable_on_let($2, "int");
+                }
                 | END
                 | FOR ID '=' Expression TO Expression {
                     declare_variable_on_for($2);
@@ -188,7 +214,7 @@ Statement: CLOSE '#' Integer
                 | INPUT '#' Integer ',' IDList
                 | LET ID '=' Expression {
                     declare_variable_on_let($2, $4);
-                    printf("$4 = %s\n", $4);
+                    // printf("$4 = %s\n", $4);
                 }
                 | NEXT IDList
                 | OPEN Value FOR Access AS '#' Integer
@@ -234,68 +260,138 @@ PrintList: Expression ';' PrintList
                     | Branco
 ;
 
-Expression: AndExp OR Expression
-                | AndExp
+Expression: AndExp OR Expression {
+                    handle_equal_types($1, $3);
+                }
+                | AndExp {
+                    $$ = $1;
+                }
 ;
 
-AndExp: NotExp AND AndExp
-                | NotExp
+AndExp: NotExp AND AndExp {
+                    handle_equal_types($1, $3);
+                }
+                | NotExp {
+                    $$ = $1;
+                }
 ;
 
-NotExp: NOT CompareExp
-                | CompareExp
+NotExp: NOT CompareExp {
+                    $$ = $2;                 
+                }
+                | CompareExp {
+                    $$ = $1;
+                }
 ;
 
-CompareExp: AddExp '='  CompareExp
-                | AddExp NOT_EQUAL_TO_A CompareExp
-                | AddExp NOT_EQUAL_TO_B CompareExp
-                | AddExp '>'  CompareExp
-                | AddExp GREATER_OR_EQUAL_THAN CompareExp
-                | AddExp '<'  CompareExp
-                | AddExp LESS_OR_EQUAL_THAN CompareExp
-                | AddExp
+CompareExp: AddExp '='  CompareExp  {
+                    handle_non_numeric($1);
+                    handle_non_numeric($3);
+                }
+                | AddExp NOT_EQUAL_TO_A CompareExp  {
+                    handle_non_numeric($1);
+                    handle_non_numeric($3);
+                }
+                | AddExp NOT_EQUAL_TO_B CompareExp  {
+                    handle_non_numeric($1);
+                    handle_non_numeric($3);
+                }
+                | AddExp '>'  CompareExp {
+                    handle_non_numeric($1);
+                    handle_non_numeric($3);
+                }
+                | AddExp GREATER_OR_EQUAL_THAN CompareExp {
+                    handle_non_numeric($1);
+                    handle_non_numeric($3);
+                }
+                | AddExp '<'  CompareExp {
+                    handle_non_numeric($1);
+                    handle_non_numeric($3);
+                }
+                | AddExp LESS_OR_EQUAL_THAN CompareExp {
+                    handle_non_numeric($1);
+                    handle_non_numeric($3);
+                }
+                | AddExp {
+                    $$ = $1;
+                }
 ;
 
-AddExp: MultExp '+' AddExp
-                | MultExp '-' AddExp
-                | MultExp
+AddExp: MultExp '+' AddExp {
+                    handle_arithmetic_types($1, $3);
+                }
+                | MultExp '-' AddExp {
+                    handle_arithmetic_types($1, $3);
+                }
+                | MultExp {
+                    $$ = $1;
+                }
 ;
 
-MultExp: NegateExp '*' MultExp
-                | NegateExp '/' MultExp
-                | NegateExp
+MultExp: NegateExp '*' MultExp {
+                    handle_arithmetic_types($1, $3);
+                }
+                | NegateExp '/' MultExp {
+                    handle_arithmetic_types($1, $3);
+                }
+                | NegateExp {
+                    $$ = $1;
+                }
 ;
 
-NegateExp: '-' PowerExp
-                | PowerExp
+NegateExp: '-' PowerExp {
+                    $$ = $2;
+                }
+                | PowerExp {
+                    $$ = $1;
+                }
 ;
 
-PowerExp: Value PowerExp2
-                | Value
+PowerExp: Value PowerExp2 {
+                    // TODO
+                }
+                | Value {
+                    $$ = $1;
+                }
 ;
 
-PowerExp2: '^' PowerExp
+PowerExp2: '^' PowerExp {
+                    handle_non_numeric($2);
+                    $$ = $2;
+                }
 ;
 
-Value: '(' Expression ')'
+Value: '(' Expression ')' {
+                    $$ = $2;                
+                }
                 | ID {
                     bool declared = check_if_variable_is_declared($1);
                     if(declared)
                     {
                         char* varType = get_variable_type($1);
-                        printf("Variable %s is of type %s\n", $1, varType);
+                        // printf("Variable %s is of type %s\n", $1, varType);
                         $$ = varType;
                     }
                     else
                     {
                         yyerror("Semantic error - Variable used before declaration.");
-                    } 
+                    }
                 }
-                /* | ID '(' ExpressionList ')' */
+                | ID '(' ExpressionList ')' {
+                    bool declared = check_if_variable_is_declared($1);
+                    if(declared)
+                    {
+                        char* varType = get_variable_type($1);
+                        // printf("Variable %s is of type %s\n", $1, varType);
+                        $$ = varType;
+                    }
+                    else
+                    {
+                        yyerror("Semantic error - Variable used before declaration.");
+                    }
+                }
                 | Constant {
-                    // printf("$$ = %s\n", $$);
                     $$ = $1;
-                    // printf("$1 = %s\n", $1);
                 }
 ;
 
@@ -307,7 +403,7 @@ Constant: Integer {
                 $$ = "string";
                 // printf("String: %s\n", $1);
             }
-            // MUDAR NO SCANNER PRA PEGAR REAL
+            // TODO: MUDAR NO SCANNER PRA PEGAR REAL
              | Real {
                 $$ = "float";
                 // printf("float: %f\n", $1);
