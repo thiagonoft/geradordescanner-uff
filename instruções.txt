@@ -1,9 +1,9 @@
 Para compilar, usar o comando:
     make
 
-Para executar, usar um dos arquivos de exemplo na pasta 'exemplos'. Informações de tipo são
-imprimidas no console e, caso o arquivo for válido, gera um arquivo com o código em python
-'output.py'.
+Para executar, usar um dos arquivos de exemplo na pasta 'tests'. Informações de parsing
+são imprimidas no console e, caso o arquivo for válido, gera um arquivo com o código em
+python 'output.py'.
 
 Exemplo de uso:
     make
