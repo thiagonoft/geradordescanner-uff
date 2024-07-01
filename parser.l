@@ -53,6 +53,7 @@
 ")"                   { return ')'; }
 
 [0-9]+                { yylval.ival = atoi(yytext); return Integer; }
+[0-9]+\.[0-9]+        { yylval.fval = atof(yytext); return Real; }
 [a-zA-Z][a-zA-Z0-9]*[$%]?  { yylval.sval = strdup(yytext); return ID; }
 \"[^"]*\"         { yylval.sval = strdup(yytext); return String; }
 [\t\r]+             { /* Ignorar espaços em branco */ }
@@ -62,5 +63,4 @@
 
 %%
 
-// [0-9]+\.[0-9]+         { yylval.real = atof(yytext); return Real; }
 int yywrap() { return 1; }

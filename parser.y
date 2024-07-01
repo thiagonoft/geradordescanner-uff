@@ -7,52 +7,42 @@
 typedef struct Symbol {
     char* name;
     char* type; // "int", "float", "string"
-    struct Symbol* next; // Para colisões em um possível hashing
+    struct Symbol* next; // For collision handling in hash table
 } Symbol;
 
 #define HASH_SIZE 101
 static Symbol* symbol_table[HASH_SIZE];
 
-// função hash
-unsigned hash(char* str)
-{
+// Hash function
+unsigned hash(char* str){
     unsigned hashval;
-    for(hashval = 0;
-        *str != '\0';
-        str++)
-    {
+    for(hashval = 0; *str != '\0'; str++){
         hashval = *str + 31 * hashval;
     }
     return hashval % HASH_SIZE;
 }
 
-Symbol* lookup_symbol(char *name) {
+Symbol* lookup_symbol(char *name){
     Symbol* sp;
-    for(sp = symbol_table[hash(name)];
-        sp != NULL;
-        sp = sp->next)
-    {
-        if (strcmp(name, sp->name) == 0)
+    for(sp = symbol_table[hash(name)]; sp != NULL; sp = sp->next){
+        if(strcmp(name, sp->name) == 0)
             return sp;
     }
     return NULL;
 }
 
-Symbol* insert_symbol(char *name, char *type) {
+Symbol* insert_symbol(char *name, char *type){
     unsigned hashval;
     Symbol* sp = lookup_symbol(name);
-    if (sp == NULL)
-    {
+    if(sp == NULL){
         sp = (Symbol*) malloc(sizeof(*sp));
-        if (sp == NULL || (sp->name = strdup(name)) == NULL)
+        if(sp == NULL || (sp->name = strdup(name)) == NULL)
             return NULL;
         sp->type = strdup(type);
         hashval = hash(name);
         sp->next = symbol_table[hashval];
         symbol_table[hashval] = sp;
-    }
-    else
-    {
+    } else {
         free(sp->type);
         sp->type = strdup(type);
     }
@@ -67,96 +57,83 @@ extern char* yytext;
 void yyerror(const char* s);
 
 // GRAMMAR
-char* get_variable_type(char* ID)
-{
+char* get_variable_type(char* ID){
     Symbol* sym = lookup_symbol(ID);
-    if (sym == NULL) {
+    if(sym == NULL){
         yyerror("Undeclared variable");
         return NULL;
     }
     return sym->type;
 }
 
-void handle_arithmetic_types(char* typeA, char* typeB)
-{
-    if(strcmp(typeA, "int") != 0 || strcmp(typeB, "int") != 0) {
-        yyerror("Type error - Arithmetic operation between one or more non-arithmetic types");
+void handle_arithmetic_types(char* typeA, char* typeB){
+    if((
+        (
+            (strcmp(typeA, "int") != 0)
+         && (strcmp(typeA, "float") != 0)
+        )
+    )
+        || 
+    (
+        (
+            (strcmp(typeB, "int") != 0)
+         && (strcmp(typeB, "float") != 0)
+        )
+    ))
+    {
+        yyerror("Type error - Arithmetic operation with non-numeric type");
     }
 }
 
-void handle_equal_types(char* typeA, char* typeB)
-{
-    if(strcmp(typeA, typeB) != 0) {
+void handle_equal_types(char* typeA, char* typeB){
+    if(strcmp(typeA, typeB) != 0){
         yyerror("Type error - Operation between two different types");
     }
 }
 
 void handle_non_numeric(char* type)
 {
-    if(strcmp(type, "string") == 0) {
+    if(strcmp(type, "string") == 0){
         yyerror("Type error - Expected numeric type");
     }
 }
 
-void declare_variable_on_let(char* ID, char* type)
-{
+void declare_variable_on_let(char* ID, char* type){
     Symbol* sym = lookup_symbol(ID);
-    if (sym == NULL)
-    {
+    if(sym == NULL){
         sym = insert_symbol(ID, type);
-        if (sym == NULL)
-        {
+        if(sym == NULL){
             yyerror("Memory error: could not declare variable");
+        } else {
+            printf("Variable %s explicitly set to type %s\n", ID, type);
         }
-        else
-        {
-            printf("Variable %s explicitly set\n", ID);
-        }
-    }
-    else
-    {
-        // lidar com a atribuição
-        printf("Variable %s updated or redeclared\n", ID);
-        if(strcmp(sym->type, type) != 0)
-        {
-            yyerror("Type error - Variable updated or redeclared with a different type");
+    } else {
+        if(strcmp(sym->type, type) != 0){
+            yyerror("Type error - Variable redeclared with a different type");
         }
     }
 }
 
-void declare_variable_on_for(char* ID)
-{
+void declare_variable_on_for(char* ID){
     Symbol* sym = lookup_symbol(ID);
-    if (sym == NULL)
-    {
+    if(sym == NULL){
         sym = insert_symbol(ID, "int");
-        if (sym == NULL)
-        {
+        if(sym == NULL){
             yyerror("Memory error: could not declare variable");
+        } else {
+            printf("Variable %s implicitly set to type int\n", ID);
         }
-        else
-        {
-            printf("Variable %s implicitly set\n", ID);
-        }
-    }
-    else {
+    } else {
         handle_equal_types(sym->type, "int");
     }
 }
 
-bool check_if_variable_is_declared(char* ID)
-{
+bool check_if_variable_is_declared(char* ID){
     Symbol* sym = lookup_symbol(ID);
-    if (sym == NULL)
-    {
-        // printf("Variable %s is not declared\n", ID);
+    if(sym == NULL){
         return false;
     }
-    else
-    {
-        // printf("Variable %s is of type %s\n", ID, sym->type);
-        return true;
-    }
+    return true;
 }
 
 %}
@@ -214,7 +191,6 @@ Statement: CLOSE '#' Integer
                 | INPUT '#' Integer ',' IDList
                 | LET ID '=' Expression {
                     declare_variable_on_let($2, $4);
-                    // printf("$4 = %s\n", $4);
                 }
                 | NEXT IDList
                 | OPEN Value FOR Access AS '#' Integer
@@ -262,6 +238,7 @@ PrintList: Expression ';' PrintList
 
 Expression: AndExp OR Expression {
                     handle_equal_types($1, $3);
+                    $$ = $1; // Assume OR expressions yield the same type
                 }
                 | AndExp {
                     $$ = $1;
@@ -270,6 +247,7 @@ Expression: AndExp OR Expression {
 
 AndExp: NotExp AND AndExp {
                     handle_equal_types($1, $3);
+                    $$ = $1; // Assume AND expressions yield the same type
                 }
                 | NotExp {
                     $$ = $1;
@@ -284,33 +262,47 @@ NotExp: NOT CompareExp {
                 }
 ;
 
-CompareExp: AddExp '='  CompareExp  {
+CompareExp: AddExp '=' CompareExp {
                     handle_non_numeric($1);
                     handle_non_numeric($3);
+                    handle_equal_types($1, $3);
+                    $$ = "int"; // Comparison yields boolean type
                 }
-                | AddExp NOT_EQUAL_TO_A CompareExp  {
+                | AddExp NOT_EQUAL_TO_A CompareExp {
                     handle_non_numeric($1);
                     handle_non_numeric($3);
+                    handle_equal_types($1, $3);
+                    $$ = "int"; // Comparison yields boolean type
                 }
-                | AddExp NOT_EQUAL_TO_B CompareExp  {
+                | AddExp NOT_EQUAL_TO_B CompareExp {
                     handle_non_numeric($1);
                     handle_non_numeric($3);
+                    handle_equal_types($1, $3);
+                    $$ = "int"; // Comparison yields boolean type
                 }
-                | AddExp '>'  CompareExp {
+                | AddExp '>' CompareExp {
                     handle_non_numeric($1);
                     handle_non_numeric($3);
+                    handle_equal_types($1, $3);
+                    $$ = "int"; // Comparison yields boolean type
                 }
                 | AddExp GREATER_OR_EQUAL_THAN CompareExp {
                     handle_non_numeric($1);
                     handle_non_numeric($3);
+                    handle_equal_types($1, $3);
+                    $$ = "int"; // Comparison yields boolean type
                 }
-                | AddExp '<'  CompareExp {
+                | AddExp '<' CompareExp {
                     handle_non_numeric($1);
                     handle_non_numeric($3);
+                    handle_equal_types($1, $3);
+                    $$ = "int"; // Comparison yields boolean type
                 }
                 | AddExp LESS_OR_EQUAL_THAN CompareExp {
                     handle_non_numeric($1);
                     handle_non_numeric($3);
+                    handle_equal_types($1, $3);
+                    $$ = "int"; // Comparison yields boolean type
                 }
                 | AddExp {
                     $$ = $1;
@@ -319,9 +311,11 @@ CompareExp: AddExp '='  CompareExp  {
 
 AddExp: MultExp '+' AddExp {
                     handle_arithmetic_types($1, $3);
+                    $$ = $1; // Assume result type is same as operands
                 }
                 | MultExp '-' AddExp {
                     handle_arithmetic_types($1, $3);
+                    $$ = $1; // Assume result type is same as operands
                 }
                 | MultExp {
                     $$ = $1;
@@ -330,9 +324,11 @@ AddExp: MultExp '+' AddExp {
 
 MultExp: NegateExp '*' MultExp {
                     handle_arithmetic_types($1, $3);
+                    $$ = $1; // Assume result type is same as operands
                 }
                 | NegateExp '/' MultExp {
                     handle_arithmetic_types($1, $3);
+                    $$ = $1; // Assume result type is same as operands
                 }
                 | NegateExp {
                     $$ = $1;
@@ -348,7 +344,7 @@ NegateExp: '-' PowerExp {
 ;
 
 PowerExp: Value PowerExp2 {
-                    // TODO
+                    $$ = $1; // Assume result type is same as base
                 }
                 | Value {
                     $$ = $1;
@@ -365,29 +361,19 @@ Value: '(' Expression ')' {
                     $$ = $2;                
                 }
                 | ID {
-                    bool declared = check_if_variable_is_declared($1);
-                    if(declared)
-                    {
-                        char* varType = get_variable_type($1);
-                        // printf("Variable %s is of type %s\n", $1, varType);
-                        $$ = varType;
-                    }
-                    else
-                    {
+                    if(check_if_variable_is_declared($1)){
+                        $$ = get_variable_type($1);
+                    } else {
                         yyerror("Semantic error - Variable used before declaration.");
+                        $$ = "unknown";
                     }
                 }
                 | ID '(' ExpressionList ')' {
-                    bool declared = check_if_variable_is_declared($1);
-                    if(declared)
-                    {
-                        char* varType = get_variable_type($1);
-                        // printf("Variable %s is of type %s\n", $1, varType);
-                        $$ = varType;
-                    }
-                    else
-                    {
+                    if(check_if_variable_is_declared($1)){
+                        $$ = get_variable_type($1);
+                    } else {
                         yyerror("Semantic error - Variable used before declaration.");
+                        $$ = "unknown";
                     }
                 }
                 | Constant {
@@ -397,32 +383,26 @@ Value: '(' Expression ')' {
 
 Constant: Integer {
                 $$ = "int";
-                // printf("Integer: %d\n", $1);
             }
              | String {
                 $$ = "string";
-                // printf("String: %s\n", $1);
             }
-            // TODO: MUDAR NO SCANNER PRA PEGAR REAL
              | Real {
                 $$ = "float";
-                // printf("float: %f\n", $1);
             }
 %%
 
-int main()
-{
-	yyin = stdin;
+int main(){
+    yyin = stdin;
 
-	do
-    {
-		yyparse();
-	} while(!feof(yyin));
+    do {
+        yyparse();
+    } while(!feof(yyin));
 
-	return 0;
+    return 0;
 }
 
-void yyerror(const char* s) {
-	fprintf(stderr, "Parse error: %s\n", s);
-	exit(1);
+void yyerror(const char* s){
+    fprintf(stderr, "Parse error: %s\n", s);
+    exit(1);
 }

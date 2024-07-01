@@ -1,0 +1,4 @@
+10 LET X = 3.14
+10 LET Y = 1
+20 LET Z = X + Y
+30 PRINT Z
